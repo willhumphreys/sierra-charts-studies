@@ -14,25 +14,38 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc)
     // Section 1 - Set the configuration variables and defaults
     if (sc.SetDefaults)
     {
-        sc.GraphName = "Template Function";
+        sc.GraphName = "takeOutHighAndHoldAbove";
 
         // During development set this flag to 1, so the DLL can be rebuilt without restarting Sierra Chart. When development is completed, set it to 0 to improve performance.
         sc.FreeDLL = 1;
 
-        sc.AutoLoop = 1;  //Automatic looping is enabled.
+        sc.StudyDescription = "Displays the supplied trades as crosses";
 
-        sc.Subgraph[0].Name = "Name";
-        sc.Subgraph[0].DrawStyle = DRAWSTYLE_LINE;
-        sc.Subgraph[0].PrimaryColor = RGB (0, 255, 0);
+        sc.GraphRegion = 0;
 
-        sc.Input[0].Name = "Float Input";
-        sc.Input[0].SetFloat(0.0f);
+        sc.AutoLoop = 0;
 
         return;
     }
 
+    s_UseTool Tool;
+    int UniqueLineNumber = 74191;//any random number.
 
-    // Section 2 - Do data processing here
+    Tool.Clear(); // Reset tool structure.  Good practice but unnecessary in this case.
+    Tool.ChartNumber = sc.ChartNumber;
+
+    Tool.DrawingType = DRAWING_MARKER;
+    Tool.LineNumber =  UniqueLineNumber +1;
+
+    Tool.BeginDateTime = 100;
+    Tool.BeginValue =2148;
+    Tool.Color = RGB(255,255,255);
+    Tool.AddMethod = UTAM_ADD_OR_ADJUST;
+    Tool.MarkerType = MARKER_X;
+    Tool.MarkerSize = 8;
+    Tool.LineWidth = 2;
+
+    sc.UseTool(Tool);
 
 
 }
