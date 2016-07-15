@@ -34,10 +34,11 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc)
     Tool.Clear(); // Reset tool structure.  Good practice but unnecessary in this case.
     Tool.ChartNumber = sc.ChartNumber;
 
-    Tool.DrawingType = DRAWING_MARKER;
+    Tool.DrawingType = DRAWING_HORIZONTAL_LINE_NON_EXTENDED;
     Tool.LineNumber =  UniqueLineNumber +1;
 
     Tool.BeginDateTime = 100;
+    Tool.EndDateTime = 130;
     Tool.BeginValue =2148;
     Tool.Color = RGB(255,255,255);
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
