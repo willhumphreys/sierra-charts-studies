@@ -35,6 +35,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc)
     Tool.ChartNumber = sc.ChartNumber;
 
     Tool.DrawingType = DRAWING_HORIZONTAL_LINE_NON_EXTENDED;
+    Tool.LineStyle = DRAWSTYLE_DASH;
     Tool.LineNumber =  UniqueLineNumber +1;
 
     Tool.BeginDateTime = 100;
