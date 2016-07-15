@@ -9,11 +9,9 @@
 SCDLLName("Hold Above and Below Studies")
 
 //This is the basic framework of a study function. Change the name 'TemplateFunction' to what you require.
-SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc)
-{
+SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     // Section 1 - Set the configuration variables and defaults
-    if (sc.SetDefaults)
-    {
+    if (sc.SetDefaults) {
         sc.GraphName = "takeOutHighAndHoldAbove";
 
         // During development set this flag to 1, so the DLL can be rebuilt without restarting Sierra Chart. When development is completed, set it to 0 to improve performance.
@@ -36,12 +34,12 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc)
 
     Tool.DrawingType = DRAWING_HORIZONTAL_LINE_NON_EXTENDED;
     Tool.LineStyle = DRAWSTYLE_DASH;
-    Tool.LineNumber =  UniqueLineNumber +1;
+    Tool.LineNumber = UniqueLineNumber + 1;
 
-    Tool.BeginDateTime = 100;
-    Tool.EndDateTime = 130;
-    Tool.BeginValue =2148;
-    Tool.Color = RGB(255,255,255);
+    Tool.BeginIndex = sc.Index - 10;
+    Tool.EndIndex = sc.Index;
+    Tool.BeginValue = 2148;
+    Tool.Color = RGB(255, 255, 255);
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.MarkerType = MARKER_X;
     Tool.MarkerSize = 8;
