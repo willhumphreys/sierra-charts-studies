@@ -38,10 +38,25 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
     Tool.BeginDateTime = 100;
     Tool.EndDateTime = 130;
-    Tool.BeginValue = 2148;
+    Tool.BeginValue = sc.DailyHigh;
     Tool.Color = RGB(255, 255, 2500);
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.LineWidth = 2;
+
+
+    // In this example these are not set to anything. You will need to
+// set them to the appropriate starting DateTime and ending DateTime
+    SCDateTime Date = SCDateTime();
+
+    SCDateTime Friday = SCDateTime(2016, 7, 14, 15, 0, 0);
+
+    float Open;
+    float High;
+    float Low;
+    float Close;
+    float Volume;
+
+    int result = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
 
     sc.AddMessageToLog(sc.Symbol, 0);
 
@@ -49,7 +64,11 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     Result = sc.Symbol.CompareNoCase("SPX500");
 
     if (Result == 0) {
-        sc.AddMessageToLog("Found SPX", 0);
+
+        SCString Buffer;
+        Buffer.Format("Found SPX. Daily high is Day %d Result %d Open %f High %f Low %f Close %f Volume %f", Friday.GetDay(), result, Open, High, Low, Close, Volume);
+
+        sc.AddMessageToLog(Buffer, 0);
     } else {
         sc.AddMessageToLog("No SPX", 0);
     }
