@@ -36,13 +36,11 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     Tool.LineStyle = DRAWSTYLE_DASH;
     Tool.LineNumber = UniqueLineNumber + 1;
 
-    Tool.BeginIndex = sc.Index - 10;
-    Tool.EndIndex = sc.Index;
+    Tool.BeginDateTime = 100;
+    Tool.EndDateTime = 130;
     Tool.BeginValue = 2148;
     Tool.Color = RGB(255, 255, 255);
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
-    Tool.MarkerType = MARKER_X;
-    Tool.MarkerSize = 8;
     Tool.LineWidth = 2;
 
     sc.UseTool(Tool);
