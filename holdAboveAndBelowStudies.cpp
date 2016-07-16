@@ -35,20 +35,17 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     float Close;
     float Volume;
 
-    int result = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
+    int dateRetrieved = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
 
     sc.AddMessageToLog(sc.Symbol, 0);
 
-    long Result;
-    Result = sc.Symbol.CompareNoCase("SPX500");
-
-    if (Result == 0) {
+    if (sc.Symbol.CompareNoCase("SPX500") == 0) {
 
         SCString Buffer;
-        Buffer.Format("Found SPX. Daily high is Day %d Result %d Open %f High %f Low %f Close %f Volume %f", Friday.GetDay(), result, Open, High, Low, Close, Volume);
+        Buffer.Format("Found SPX. Daily high is Day %d Result %d Open %f High %f Low %f Close %f Volume %f", Friday.GetDay(), dateRetrieved, Open, High, Low, Close, Volume);
 
         sc.AddMessageToLog(Buffer, 0);
-    } else {
+    } else if(sc.Symbol.CompareNoCase("EURUSD") == 0){
         sc.AddMessageToLog("No SPX", 0);
     }
 
@@ -65,7 +62,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     Tool.BeginDateTime = 100;
     Tool.EndDateTime = 150;
     Tool.BeginValue = High;
-    Tool.Color = RGB(255, 255, 2500);
+    Tool.Color = RGB(255, 0, 255);
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.LineWidth = 2;
 
