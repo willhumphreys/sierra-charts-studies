@@ -26,27 +26,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
         return;
     }
 
-    s_UseTool Tool;
-    int UniqueLineNumber = 74191;//any random number.
-
-    Tool.Clear(); // Reset tool structure.  Good practice but unnecessary in this case.
-    Tool.ChartNumber = sc.ChartNumber;
-
-    Tool.DrawingType = DRAWING_HORIZONTAL_LINE_NON_EXTENDED;
-    Tool.LineStyle = DRAWSTYLE_DASH;
-    Tool.LineNumber = UniqueLineNumber + 1;
-
-    Tool.BeginDateTime = 100;
-    Tool.EndDateTime = 130;
-    Tool.BeginValue = sc.DailyHigh;
-    Tool.Color = RGB(255, 255, 2500);
-    Tool.AddMethod = UTAM_ADD_OR_ADJUST;
-    Tool.LineWidth = 2;
-
-
-    // In this example these are not set to anything. You will need to
-// set them to the appropriate starting DateTime and ending DateTime
-    SCDateTime Date = SCDateTime();
 
     SCDateTime Friday = SCDateTime(2016, 7, 14, 15, 0, 0);
 
@@ -72,6 +51,26 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     } else {
         sc.AddMessageToLog("No SPX", 0);
     }
+
+    s_UseTool Tool;
+    int UniqueLineNumber = 74191;//any random number.
+
+    Tool.Clear(); // Reset tool structure.  Good practice but unnecessary in this case.
+    Tool.ChartNumber = sc.ChartNumber;
+
+    Tool.DrawingType = DRAWING_HORIZONTAL_LINE_NON_EXTENDED;
+    Tool.LineStyle = DRAWSTYLE_DASH;
+    Tool.LineNumber = UniqueLineNumber + 1;
+
+    Tool.BeginDateTime = 100;
+    Tool.EndDateTime = 150;
+    Tool.BeginValue = High;
+    Tool.Color = RGB(255, 255, 2500);
+    Tool.AddMethod = UTAM_ADD_OR_ADJUST;
+    Tool.LineWidth = 2;
+
+
+
 
 
     sc.UseTool(Tool);
