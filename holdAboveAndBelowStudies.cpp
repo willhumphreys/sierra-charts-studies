@@ -22,9 +22,19 @@ void drawLine(s_sc &sc, float low, float high, float lineLevel, int lineId) {
     Tool.TransparencyLevel = 50;
     int BarIndex;
 
+
+
+    int CurrentDate = sc.BaseDateTimeIn[sc.ArraySize - 1].GetDate();
+
+    SCDateTime TimeToCheckFor;
+
+    TimeToCheckFor.SetDate(CurrentDate);
+    TimeToCheckFor.SetTimeHMS(0, 0, 0);
+
+
     // Update BarIndex to 30 bars from the end
     BarIndex = max(sc.ArraySize - 50, 0);
-    Tool.BeginDateTime = sc.BaseDateTimeIn[BarIndex];
+    Tool.BeginDateTime = TimeToCheckFor;
     BarIndex = max(sc.ArraySize, 0);
     Tool.EndDateTime = sc.BaseDateTimeIn[BarIndex];
 
@@ -48,7 +58,7 @@ void drawLine(s_sc &sc, float low, float high, float lineLevel, int lineId) {
     Tool.LineStyle = DRAWSTYLE_DASH;
     Tool.LineNumber = lineId * 2;
 
-    Tool.BeginDateTime = 100;
+    Tool.BeginDateTime = TimeToCheckFor;
     Tool.EndDateTime = sc.BaseDateTimeIn[BarIndex];
     Tool.BeginValue = lineLevel;
     Tool.Color = RGB(255, 255, 255);
@@ -137,7 +147,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
         sc.AddMessageToLog(Buffer, 0);
     } else if(sc.Symbol.CompareNoCase("EURUSD") == 0){
-        drawLine(sc, Low + eurUsdTakeOutHighHoldAbove.p20 / 10000, High + eurUsdTakeOutHighHoldAbove.p20 / 10000, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter);
+        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p20 / 10000, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter);
 //        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter++);
 //        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, idCounter++);
 //
