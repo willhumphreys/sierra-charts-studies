@@ -93,27 +93,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     float Volume;
 
     int dateRetrieved = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
-
-    PercentileGroup eurUsdTakeOutHighHoldAbove;
     int pipDivisor = 10000;
-    eurUsdTakeOutHighHoldAbove.p20 = High + (29.4 / pipDivisor);
-    eurUsdTakeOutHighHoldAbove.p50 = High + (49.0 / pipDivisor);
-    eurUsdTakeOutHighHoldAbove.p80 = High + (78.0 / pipDivisor);
-
-    PercentileGroup eurUsdTakeOutHighHoldInside;
-    eurUsdTakeOutHighHoldInside.p20 = High + (7.0 / pipDivisor);
-    eurUsdTakeOutHighHoldInside.p50 = High + (15.0 / pipDivisor);
-    eurUsdTakeOutHighHoldInside.p80 = High + (31.0 / pipDivisor);
-
-    PercentileGroup eurUsdTakeOutLowHoldBelow;
-    eurUsdTakeOutLowHoldBelow.p20 = Low - (27.0 / pipDivisor);
-    eurUsdTakeOutLowHoldBelow.p50 = Low - (49.0 / pipDivisor);
-    eurUsdTakeOutLowHoldBelow.p80 = Low - (75.0 / pipDivisor);
-
-    PercentileGroup eurUsdTakeOutLowHoldInside;
-    eurUsdTakeOutLowHoldInside.p20 = Low - (5.0 / pipDivisor);
-    eurUsdTakeOutLowHoldInside.p50 = Low - (13.0 / pipDivisor);
-    eurUsdTakeOutLowHoldInside.p80 = Low - (26.0 / pipDivisor);
 
     sc.AddMessageToLog(sc.Symbol, 0);
 
@@ -127,6 +107,27 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
         sc.AddMessageToLog(Buffer, 0);
     } else if (sc.Symbol.CompareNoCase("EURUSD") == 0) {
+
+        PercentileGroup eurUsdTakeOutHighHoldAbove;
+        eurUsdTakeOutHighHoldAbove.p20 = High + (29.4 / pipDivisor);
+        eurUsdTakeOutHighHoldAbove.p50 = High + (49.0 / pipDivisor);
+        eurUsdTakeOutHighHoldAbove.p80 = High + (78.0 / pipDivisor);
+
+        PercentileGroup eurUsdTakeOutHighHoldInside;
+        eurUsdTakeOutHighHoldInside.p20 = High + (7.0 / pipDivisor);
+        eurUsdTakeOutHighHoldInside.p50 = High + (15.0 / pipDivisor);
+        eurUsdTakeOutHighHoldInside.p80 = High + (31.0 / pipDivisor);
+
+        PercentileGroup eurUsdTakeOutLowHoldBelow;
+        eurUsdTakeOutLowHoldBelow.p20 = Low - (27.0 / pipDivisor);
+        eurUsdTakeOutLowHoldBelow.p50 = Low - (49.0 / pipDivisor);
+        eurUsdTakeOutLowHoldBelow.p80 = Low - (75.0 / pipDivisor);
+
+        PercentileGroup eurUsdTakeOutLowHoldInside;
+        eurUsdTakeOutLowHoldInside.p20 = Low - (5.0 / pipDivisor);
+        eurUsdTakeOutLowHoldInside.p50 = Low - (13.0 / pipDivisor);
+        eurUsdTakeOutLowHoldInside.p80 = Low - (26.0 / pipDivisor);
+
         drawLine(sc, eurUsdTakeOutHighHoldAbove, idCounter++, COLOR_SANDYBROWN);
         drawLine(sc, eurUsdTakeOutHighHoldInside, idCounter++, COLOR_YELLOW);
 
