@@ -80,7 +80,7 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
     Tool.BeginDateTime = TimeToCheckFor;
     Tool.EndDateTime = sc.BaseDateTimeIn[BarIndex];
     Tool.BeginValue = percentileGroup.p50;
-    Tool.Color = RGB(255, 255, 255);
+    Tool.Color = rectangleColor;
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.LineWidth = 2;
     sc.UseTool(Tool);
