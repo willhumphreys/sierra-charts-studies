@@ -101,6 +101,8 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
     sc.AddMessageToLog(sc.Symbol, 0);
 
+    int idCounter = 74191;
+
     if (sc.Symbol.CompareNoCase("SPX500") == 0) {
 
         SCString Buffer;
@@ -108,27 +110,21 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
         sc.AddMessageToLog(Buffer, 0);
     } else if(sc.Symbol.CompareNoCase("EURUSD") == 0){
-        sc.AddMessageToLog("No SPX", 0);
+        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p20 / 10000, idCounter);
+        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter++);
+        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, idCounter++);
+
+        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p20 / 10000, idCounter++);
+        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p50 / 10000, idCounter++);
+        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p80 / 10000, idCounter++);
+
+        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p20 / 10000, idCounter++);
+        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p50 / 10000, idCounter++);
+        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p80 / 10000, idCounter++);
+
+        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p20 / 10000, idCounter++);
+        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p50 / 10000, idCounter++);
+        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p80 / 10000, idCounter++);
     }
-
-    int idCounter = 74191;
-
-    drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p20 / 10000, idCounter);
-    drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter++);
-    drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, idCounter++);
-
-    drawLine(sc, High + eurUsdTakeOutHighHoldInside.p20 / 10000, idCounter++);
-    drawLine(sc, High + eurUsdTakeOutHighHoldInside.p50 / 10000, idCounter++);
-    drawLine(sc, High + eurUsdTakeOutHighHoldInside.p80 / 10000, idCounter++);
-
-    drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p20 / 10000, idCounter++);
-    drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p50 / 10000, idCounter++);
-    drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p80 / 10000, idCounter++);
-
-    drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p20 / 10000, idCounter++);
-    drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p50 / 10000, idCounter++);
-    drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p80 / 10000, idCounter++);
-
-
 }
 
