@@ -116,24 +116,25 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
 
     PercentileGroup eurUsdTakeOutHighHoldAbove;
-    eurUsdTakeOutHighHoldAbove.p20 = High + (29.4 / 10000);
-    eurUsdTakeOutHighHoldAbove.p50 = High + (49.0 / 10000);
-    eurUsdTakeOutHighHoldAbove.p80 = High + (78.0 / 10000);
+    int pipDivisor = 10000;
+    eurUsdTakeOutHighHoldAbove.p20 = High + (29.4 / pipDivisor);
+    eurUsdTakeOutHighHoldAbove.p50 = High + (49.0 / pipDivisor);
+    eurUsdTakeOutHighHoldAbove.p80 = High + (78.0 / pipDivisor);
 
     PercentileGroup eurUsdTakeOutHighHoldInside;
-    eurUsdTakeOutHighHoldInside.p20 = High + (7.0 / 10000);
-    eurUsdTakeOutHighHoldInside.p50 = High + (15.0 / 10000);
-    eurUsdTakeOutHighHoldInside.p80 = High + (31.0 / 10000);
+    eurUsdTakeOutHighHoldInside.p20 = High + (7.0 / pipDivisor);
+    eurUsdTakeOutHighHoldInside.p50 = High + (15.0 / pipDivisor);
+    eurUsdTakeOutHighHoldInside.p80 = High + (31.0 / pipDivisor);
 
     PercentileGroup eurUsdTakeOutLowHoldBelow;
-    eurUsdTakeOutLowHoldBelow.p20 = Low - (27.0 / 10000);
-    eurUsdTakeOutLowHoldBelow.p50 = Low - (49.0 / 10000);
-    eurUsdTakeOutLowHoldBelow.p80 = Low - (75.0 / 10000);
+    eurUsdTakeOutLowHoldBelow.p20 = Low - (27.0 / pipDivisor);
+    eurUsdTakeOutLowHoldBelow.p50 = Low - (49.0 / pipDivisor);
+    eurUsdTakeOutLowHoldBelow.p80 = Low - (75.0 / pipDivisor);
 
     PercentileGroup eurUsdTakeOutLowHoldInside;
-    eurUsdTakeOutLowHoldInside.p20 = Low - (5.0 / 1000);
-    eurUsdTakeOutLowHoldInside.p50 = Low - (13.0 / 1000);
-    eurUsdTakeOutLowHoldInside.p80 = Low - (26.0 / 1000);
+    eurUsdTakeOutLowHoldInside.p20 = Low - (5.0 / pipDivisor);
+    eurUsdTakeOutLowHoldInside.p50 = Low - (13.0 / pipDivisor);
+    eurUsdTakeOutLowHoldInside.p80 = Low - (26.0 / pipDivisor);
 
     eurusd.symbol = "EURUSD";
     eurusd.takeOutHighHoldAbove = eurUsdTakeOutHighHoldAbove;
@@ -158,7 +159,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
         drawLine(sc, eurusd.takeOutLowHoldBelow, idCounter++, COLOR_SANDYBROWN);
         drawLine(sc, eurusd.takeOutLowHoldInside, idCounter++, COLOR_YELLOW);
-
     }
 }
 
