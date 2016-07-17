@@ -1,11 +1,4 @@
-// The top of every source code file must include this line
 #include "sierrachart.h"
-
-// For reference, refer to this page:
-// https://www.sierrachart.com/index.php?page=doc/AdvancedCustomStudyInterfaceAndLanguage.php
-
-// This line is required. Change the text within the quote
-// marks to what you want to name your group of custom studies.
 
 struct PercentileGroup {
     float p20;
@@ -87,9 +80,6 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
 
 }
 
-
-
-//This is the basic framework of a study function. Change the name 'TemplateFunction' to what you require.
 SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     // Section 1 - Set the configuration variables and defaults
     if (sc.SetDefaults) {
@@ -113,7 +103,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     float Volume;
 
     int dateRetrieved = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
-
 
     PercentileGroup eurUsdTakeOutHighHoldAbove;
     int pipDivisor = 10000;
