@@ -121,21 +121,20 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     eurUsdTakeOutHighHoldAbove.p50 = High + (49.0 / 10000);
     eurUsdTakeOutHighHoldAbove.p80 = High + (78.0 / 10000);
 
-
     PercentileGroup eurUsdTakeOutHighHoldInside;
-    eurUsdTakeOutHighHoldInside.p20 = 7;
-    eurUsdTakeOutHighHoldInside.p50 = 15;
-    eurUsdTakeOutHighHoldInside.p80 = 31;
+    eurUsdTakeOutHighHoldInside.p20 = High + (7.0 / 10000);
+    eurUsdTakeOutHighHoldInside.p50 = High + (15.0 / 10000);
+    eurUsdTakeOutHighHoldInside.p80 = High + (31.0 / 10000);
 
     PercentileGroup eurUsdTakeOutLowHoldBelow;
-    eurUsdTakeOutLowHoldBelow.p20 = 27;
-    eurUsdTakeOutLowHoldBelow.p50 = 49;
-    eurUsdTakeOutLowHoldBelow.p80 = 75;
+    eurUsdTakeOutLowHoldBelow.p20 = Low - (27.0 / 10000);
+    eurUsdTakeOutLowHoldBelow.p50 = Low - (49.0 / 10000);
+    eurUsdTakeOutLowHoldBelow.p80 = Low - (75.0 / 10000);
 
     PercentileGroup eurUsdTakeOutLowHoldInside;
-    eurUsdTakeOutLowHoldInside.p20 = 5;
-    eurUsdTakeOutLowHoldInside.p50 = 13;
-    eurUsdTakeOutLowHoldInside.p80 = 26;
+    eurUsdTakeOutLowHoldInside.p20 = Low - (5.0 / 1000);
+    eurUsdTakeOutLowHoldInside.p50 = Low - (13.0 / 1000);
+    eurUsdTakeOutLowHoldInside.p80 = Low - (26.0 / 1000);
 
     eurusd.symbol = "EURUSD";
     eurusd.takeOutHighHoldAbove = eurUsdTakeOutHighHoldAbove;
@@ -154,21 +153,9 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
         sc.AddMessageToLog(Buffer, 0);
     } else if(sc.Symbol.CompareNoCase("EURUSD") == 0){
-        drawLine(sc, eurusd.takeOutHighHoldAbove, idCounter);
-//        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter++);
-//        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, idCounter++);
-//
-//        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p20 / 10000, idCounter++);
-//        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p50 / 10000, idCounter++);
-//        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p80 / 10000, idCounter++);
-//
-//        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p20 / 10000, idCounter++);
-//        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p50 / 10000, idCounter++);
-//        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p80 / 10000, idCounter++);
-//
-//        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p20 / 10000, idCounter++);
-//        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p50 / 10000, idCounter++);
-//        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p80 / 10000, idCounter++);
+        drawLine(sc, eurusd.takeOutHighHoldAbove, idCounter++);
+        drawLine(sc, eurusd.takeOutHighHoldInside, idCounter++);
+
     }
 }
 
