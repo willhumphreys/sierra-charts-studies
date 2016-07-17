@@ -6,19 +6,47 @@
 
 // This line is required. Change the text within the quote
 // marks to what you want to name your group of custom studies.
-void drawLine(s_sc &sc, float lineLevel, int lineId);
+void drawLine(s_sc &sc, float high, int lineId);
 
 SCDLLName("Hold Above and Below Studies")
 
-void drawLine(s_sc &sc, float lineLevel, int lineId) {
+void drawLine(s_sc &sc, float low, float high, float lineLevel, int lineId) {
     s_UseTool Tool;
 
     Tool.Clear(); // Reset tool structure.  Good practice but unnecessary in this case.
     Tool.ChartNumber = sc.ChartNumber;
 
+    Tool.DrawingType = DRAWING_RECTANGLEHIGHLIGHT;
+    Tool.LineNumber = lineId;
+
+    Tool.TransparencyLevel = 50;
+    int BarIndex;
+
+    // Update BarIndex to 30 bars from the end
+    BarIndex = max(sc.ArraySize - 50, 0);
+    Tool.BeginDateTime = sc.BaseDateTimeIn[BarIndex];
+    BarIndex = max(sc.ArraySize, 0);
+    Tool.EndDateTime = sc.BaseDateTimeIn[BarIndex];
+
+
+    Tool.BeginValue = low;
+    Tool.EndValue = high;
+
+    Tool.ShowPrice = 1;
+
+    Tool.Color = RGB(255, 255, 0);
+    Tool.SecondaryColor = RGB(255, 0, 255);
+    Tool.AddMethod = UTAM_ADD_OR_ADJUST;
+    Tool.LineWidth = 1;
+    sc.UseTool(Tool);
+
+    //Middle line
+    Tool.Clear(); // Reset tool structure.  Good practice but unnecessary in this case.
+    Tool.ChartNumber = sc.ChartNumber;
+
     Tool.DrawingType = DRAWING_HORIZONTAL_LINE_NON_EXTENDED;
     Tool.LineStyle = DRAWSTYLE_DASH;
-    Tool.LineNumber = lineId;
+    Tool.LineNumber = lineId * 2;
 
     Tool.BeginDateTime = 100;
     Tool.EndDateTime = 150;
@@ -27,7 +55,10 @@ void drawLine(s_sc &sc, float lineLevel, int lineId) {
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.LineWidth = 2;
     sc.UseTool(Tool);
+
 }
+
+
 
 //This is the basic framework of a study function. Change the name 'TemplateFunction' to what you require.
 SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
@@ -85,10 +116,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     eurusd.takeOutLowHoldBelow = eurUsdTakeOutLowHoldBelow;
     eurusd.takeOutLowHoldInside = eurUsdTakeOutLowHoldInside;
 
-
-
-
-
     SCDateTime Friday = SCDateTime(2016, 7, 14, 15, 0, 0);
 
     float Open;
@@ -110,21 +137,21 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
         sc.AddMessageToLog(Buffer, 0);
     } else if(sc.Symbol.CompareNoCase("EURUSD") == 0){
-        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p20 / 10000, idCounter);
-        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter++);
-        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, idCounter++);
-
-        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p20 / 10000, idCounter++);
-        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p50 / 10000, idCounter++);
-        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p80 / 10000, idCounter++);
-
-        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p20 / 10000, idCounter++);
-        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p50 / 10000, idCounter++);
-        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p80 / 10000, idCounter++);
-
-        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p20 / 10000, idCounter++);
-        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p50 / 10000, idCounter++);
-        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p80 / 10000, idCounter++);
+        drawLine(sc, Low + eurUsdTakeOutHighHoldAbove.p20 / 10000, High + eurUsdTakeOutHighHoldAbove.p20 / 10000, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter);
+//        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter++);
+//        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, idCounter++);
+//
+//        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p20 / 10000, idCounter++);
+//        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p50 / 10000, idCounter++);
+//        drawLine(sc, High + eurUsdTakeOutHighHoldInside.p80 / 10000, idCounter++);
+//
+//        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p20 / 10000, idCounter++);
+//        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p50 / 10000, idCounter++);
+//        drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p80 / 10000, idCounter++);
+//
+//        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p20 / 10000, idCounter++);
+//        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p50 / 10000, idCounter++);
+//        drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p80 / 10000, idCounter++);
     }
 }
 
