@@ -102,7 +102,34 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     int idCounter = 74191;
 
     if (sc.Symbol.CompareNoCase("EURGBP") == 0) {
+        int pipDivisor = 10000;
 
+        PercentileGroup percentileGroups[4] = {{
+                                                       High + (float) (16.0 / pipDivisor),
+                                                       High + (float) (31.0 / pipDivisor),
+                                                       High + (float) (59.0 / pipDivisor)
+                                               },
+                                               {
+                                                       High + (float) (3.0 / pipDivisor),
+                                                       High + (float) (9.0 / pipDivisor),
+                                                       High + (float) (20.0 / pipDivisor)
+                                               },
+                                               {
+                                                       Low - (float) (15.0 / pipDivisor),
+                                                       Low - (float) (27.0 / pipDivisor),
+                                                       Low - (float) (47.0 / pipDivisor)
+                                               },
+                                               {
+                                                       Low - (float) (3.0 / pipDivisor),
+                                                       Low - (float) (9.0 / pipDivisor),
+                                                       Low - (float) (16.0 / pipDivisor)
+                                               }
+        };
+
+        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
+        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
+        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
+        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
 
     } else if (sc.Symbol.CompareNoCase("EURUSD") == 0) {
 
