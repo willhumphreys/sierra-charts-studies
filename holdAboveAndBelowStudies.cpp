@@ -6,19 +6,9 @@ struct PercentileGroup {
     float p80;
 };
 
-struct SymbolPercentile {
-    SCString symbol;
-    PercentileGroup takeOutHighHoldAbove;
-    PercentileGroup takeOutHighHoldInside;
-    PercentileGroup takeOutLowHoldBelow;
-    PercentileGroup takeOutLowHoldInside;
-
-} eurusd, eurgbp, eurjpy, gbpusd, usdcad, usdchf, audusd, nzdusd, usdjpy, eurchf;
-
 void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor);
 
 SCDLLName("Hold Above and Below Studies")
-
 
 void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor) {
     s_UseTool Tool;
@@ -125,12 +115,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     eurUsdTakeOutLowHoldInside.p50 = Low - (13.0 / pipDivisor);
     eurUsdTakeOutLowHoldInside.p80 = Low - (26.0 / pipDivisor);
 
-    eurusd.symbol = "EURUSD";
-    eurusd.takeOutHighHoldAbove = eurUsdTakeOutHighHoldAbove;
-    eurusd.takeOutHighHoldInside = eurUsdTakeOutHighHoldInside;
-    eurusd.takeOutLowHoldBelow = eurUsdTakeOutLowHoldBelow;
-    eurusd.takeOutLowHoldInside = eurUsdTakeOutLowHoldInside;
-
     sc.AddMessageToLog(sc.Symbol, 0);
 
     int idCounter = 74191;
@@ -143,11 +127,11 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
         sc.AddMessageToLog(Buffer, 0);
     } else if (sc.Symbol.CompareNoCase("EURUSD") == 0) {
-        drawLine(sc, eurusd.takeOutHighHoldAbove, idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, eurusd.takeOutHighHoldInside, idCounter++, COLOR_YELLOW);
+        drawLine(sc, eurUsdTakeOutHighHoldAbove, idCounter++, COLOR_SANDYBROWN);
+        drawLine(sc, eurUsdTakeOutHighHoldInside, idCounter++, COLOR_YELLOW);
 
-        drawLine(sc, eurusd.takeOutLowHoldBelow, idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, eurusd.takeOutLowHoldInside, idCounter++, COLOR_YELLOW);
+        drawLine(sc, eurUsdTakeOutLowHoldBelow, idCounter++, COLOR_SANDYBROWN);
+        drawLine(sc, eurUsdTakeOutLowHoldInside, idCounter++, COLOR_YELLOW);
     }
 }
 
