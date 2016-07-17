@@ -22,13 +22,12 @@ struct SymbolPercentile {
 
 } eurusd, eurgbp, eurjpy, gbpusd, usdcad, usdchf, audusd, nzdusd, usdjpy, eurchf;
 
-void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId);
+void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor);
 
 SCDLLName("Hold Above and Below Studies")
 
 
-
-void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId) {
+void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor) {
     s_UseTool Tool;
 
     Tool.Clear();
@@ -64,8 +63,8 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId) {
 
     Tool.ShowPrice = 1;
 
-    Tool.Color = RGB(255, 255, 0);
-    Tool.SecondaryColor = RGB(255, 0, 255);
+    Tool.Color = rectangleColor;
+    Tool.SecondaryColor = rectangleColor;
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.LineWidth = 1;
     sc.UseTool(Tool);
@@ -149,12 +148,16 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     if (sc.Symbol.CompareNoCase("SPX500") == 0) {
 
         SCString Buffer;
-        Buffer.Format("Found SPX. Daily high is Day %d Result %d Open %f High %f Low %f Close %f Volume %f", Friday.GetDay(), dateRetrieved, Open, High, Low, Close, Volume);
+        Buffer.Format("Found SPX. Daily high is Day %d Result %d Open %f High %f Low %f Close %f Volume %f",
+                      Friday.GetDay(), dateRetrieved, Open, High, Low, Close, Volume);
 
         sc.AddMessageToLog(Buffer, 0);
-    } else if(sc.Symbol.CompareNoCase("EURUSD") == 0){
-        drawLine(sc, eurusd.takeOutHighHoldAbove, idCounter++);
-        drawLine(sc, eurusd.takeOutHighHoldInside, idCounter++);
+    } else if (sc.Symbol.CompareNoCase("EURUSD") == 0) {
+        drawLine(sc, eurusd.takeOutHighHoldAbove, idCounter++, COLOR_SANDYBROWN);
+        drawLine(sc, eurusd.takeOutHighHoldInside, idCounter++, COLOR_YELLOW);
+
+        drawLine(sc, eurusd.takeOutLowHoldBelow, idCounter++, COLOR_SANDYBROWN);
+        drawLine(sc, eurusd.takeOutLowHoldInside, idCounter++, COLOR_YELLOW);
 
     }
 }
