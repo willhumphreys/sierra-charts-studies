@@ -6,14 +6,32 @@
 
 // This line is required. Change the text within the quote
 // marks to what you want to name your group of custom studies.
-void drawLine(s_sc &sc, float high, int lineId);
+
+struct PercentileGroup {
+    float p20;
+    float p50;
+    float p80;
+};
+
+struct SymbolPercentile {
+    SCString symbol;
+    PercentileGroup takeOutHighHoldAbove;
+    PercentileGroup takeOutHighHoldInside;
+    PercentileGroup takeOutLowHoldBelow;
+    PercentileGroup takeOutLowHoldInside;
+
+} eurusd, eurgbp, eurjpy, gbpusd, usdcad, usdchf, audusd, nzdusd, usdjpy, eurchf;
+
+void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId);
 
 SCDLLName("Hold Above and Below Studies")
 
-void drawLine(s_sc &sc, float low, float high, float lineLevel, int lineId) {
+
+
+void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId) {
     s_UseTool Tool;
 
-    Tool.Clear(); // Reset tool structure.  Good practice but unnecessary in this case.
+    Tool.Clear();
     Tool.ChartNumber = sc.ChartNumber;
 
     Tool.DrawingType = DRAWING_RECTANGLEHIGHLIGHT;
@@ -21,8 +39,6 @@ void drawLine(s_sc &sc, float low, float high, float lineLevel, int lineId) {
 
     Tool.TransparencyLevel = 50;
     int BarIndex;
-
-
 
     int CurrentDate = sc.BaseDateTimeIn[sc.ArraySize - 1].GetDate();
 
@@ -38,9 +54,13 @@ void drawLine(s_sc &sc, float low, float high, float lineLevel, int lineId) {
     BarIndex = max(sc.ArraySize, 0);
     Tool.EndDateTime = sc.BaseDateTimeIn[BarIndex];
 
+    SCString Buffer;
+    Buffer.Format("p20 %f p50 %f p80 %f", percentileGroup.p20, percentileGroup.p50, percentileGroup.p80);
 
-    Tool.BeginValue = low;
-    Tool.EndValue = high;
+    sc.AddMessageToLog(Buffer, 0);
+
+    Tool.BeginValue = percentileGroup.p20;
+    Tool.EndValue = percentileGroup.p80;
 
     Tool.ShowPrice = 1;
 
@@ -60,7 +80,7 @@ void drawLine(s_sc &sc, float low, float high, float lineLevel, int lineId) {
 
     Tool.BeginDateTime = TimeToCheckFor;
     Tool.EndDateTime = sc.BaseDateTimeIn[BarIndex];
-    Tool.BeginValue = lineLevel;
+    Tool.BeginValue = percentileGroup.p50;
     Tool.Color = RGB(255, 255, 255);
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.LineWidth = 2;
@@ -85,25 +105,22 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
         return;
     }
 
-    struct PercentileGroup {
-        float p20;
-        float p50;
-        float p80;
-    };
+    SCDateTime Friday = SCDateTime(2016, 7, 14, 15, 0, 0);
 
-    struct SymbolPercentile {
-        SCString symbol;
-        PercentileGroup takeOutHighHoldAbove;
-        PercentileGroup takeOutHighHoldInside;
-        PercentileGroup takeOutLowHoldBelow;
-        PercentileGroup takeOutLowHoldInside;
+    float Open;
+    float High;
+    float Low;
+    float Close;
+    float Volume;
 
-    } eurusd, eurgbp, eurjpy, gbpusd, usdcad, usdchf, audusd, nzdusd, usdjpy, eurchf;
+    int dateRetrieved = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
+
 
     PercentileGroup eurUsdTakeOutHighHoldAbove;
-    eurUsdTakeOutHighHoldAbove.p20 = 29.4;
-    eurUsdTakeOutHighHoldAbove.p50 = 49;
-    eurUsdTakeOutHighHoldAbove.p80 = 78;
+    eurUsdTakeOutHighHoldAbove.p20 = High + (29.4 / 10000);
+    eurUsdTakeOutHighHoldAbove.p50 = High + (49.0 / 10000);
+    eurUsdTakeOutHighHoldAbove.p80 = High + (78.0 / 10000);
+
 
     PercentileGroup eurUsdTakeOutHighHoldInside;
     eurUsdTakeOutHighHoldInside.p20 = 7;
@@ -126,16 +143,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     eurusd.takeOutLowHoldBelow = eurUsdTakeOutLowHoldBelow;
     eurusd.takeOutLowHoldInside = eurUsdTakeOutLowHoldInside;
 
-    SCDateTime Friday = SCDateTime(2016, 7, 14, 15, 0, 0);
-
-    float Open;
-    float High;
-    float Low;
-    float Close;
-    float Volume;
-
-    int dateRetrieved = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
-
     sc.AddMessageToLog(sc.Symbol, 0);
 
     int idCounter = 74191;
@@ -147,7 +154,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
         sc.AddMessageToLog(Buffer, 0);
     } else if(sc.Symbol.CompareNoCase("EURUSD") == 0){
-        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p20 / 10000, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter);
+        drawLine(sc, eurusd.takeOutHighHoldAbove, idCounter);
 //        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter++);
 //        drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, idCounter++);
 //
