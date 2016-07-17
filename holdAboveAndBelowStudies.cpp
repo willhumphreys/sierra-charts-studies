@@ -49,7 +49,7 @@ void drawLine(s_sc &sc, float low, float high, float lineLevel, int lineId) {
     Tool.LineNumber = lineId * 2;
 
     Tool.BeginDateTime = 100;
-    Tool.EndDateTime = 150;
+    Tool.EndDateTime = sc.BaseDateTimeIn[BarIndex];
     Tool.BeginValue = lineLevel;
     Tool.Color = RGB(255, 255, 255);
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
