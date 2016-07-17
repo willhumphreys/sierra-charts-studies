@@ -6,25 +6,24 @@
 
 // This line is required. Change the text within the quote
 // marks to what you want to name your group of custom studies.
-void drawLine(s_sc &sc, float High);
+void drawLine(s_sc &sc, float lineLevel, int lineId);
 
 SCDLLName("Hold Above and Below Studies")
 
-void drawLine(s_sc &sc, float High) {
+void drawLine(s_sc &sc, float lineLevel, int lineId) {
     s_UseTool Tool;
-    int UniqueLineNumber = 74191;//any random number.
 
     Tool.Clear(); // Reset tool structure.  Good practice but unnecessary in this case.
     Tool.ChartNumber = sc.ChartNumber;
 
     Tool.DrawingType = DRAWING_HORIZONTAL_LINE_NON_EXTENDED;
     Tool.LineStyle = DRAWSTYLE_DASH;
-    Tool.LineNumber = UniqueLineNumber + 1;
+    Tool.LineNumber = lineId;
 
     Tool.BeginDateTime = 100;
     Tool.EndDateTime = 150;
-    Tool.BeginValue = High;
-    Tool.Color = RGB(255, 0, 255);
+    Tool.BeginValue = lineLevel;
+    Tool.Color = RGB(255, 255, 255);
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.LineWidth = 2;
     sc.UseTool(Tool);
@@ -75,16 +74,16 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     eurUsdTakeOutLowHoldBelow.p50 = 49;
     eurUsdTakeOutLowHoldBelow.p80 = 75;
 
-    PercentileGroup eurUsdTakeLowHoldInside;
-    eurUsdTakeLowHoldInside.p20 = 5;
-    eurUsdTakeLowHoldInside.p50 = 13;
-    eurUsdTakeLowHoldInside.p80 = 26;
+    PercentileGroup eurUsdTakeOutLowHoldInside;
+    eurUsdTakeOutLowHoldInside.p20 = 5;
+    eurUsdTakeOutLowHoldInside.p50 = 13;
+    eurUsdTakeOutLowHoldInside.p80 = 26;
 
     eurusd.symbol = "EURUSD";
     eurusd.takeOutHighHoldAbove = eurUsdTakeOutHighHoldAbove;
     eurusd.takeOutHighHoldInside = eurUsdTakeOutHighHoldInside;
     eurusd.takeOutLowHoldBelow = eurUsdTakeOutLowHoldBelow;
-    eurusd.takeOutHighHoldInside = eurUsdTakeLowHoldInside;
+    eurusd.takeOutLowHoldInside = eurUsdTakeOutLowHoldInside;
 
 
 
@@ -112,7 +111,23 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
         sc.AddMessageToLog("No SPX", 0);
     }
 
-    drawLine(sc, High);
+    int idCounter = 74191;
+
+    drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p20 / 10000, idCounter);
+    drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p50 / 10000, idCounter++);
+    drawLine(sc, High + eurUsdTakeOutHighHoldAbove.p80 / 10000, idCounter++);
+
+    drawLine(sc, High + eurUsdTakeOutHighHoldInside.p20 / 10000, idCounter++);
+    drawLine(sc, High + eurUsdTakeOutHighHoldInside.p50 / 10000, idCounter++);
+    drawLine(sc, High + eurUsdTakeOutHighHoldInside.p80 / 10000, idCounter++);
+
+    drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p20 / 10000, idCounter++);
+    drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p50 / 10000, idCounter++);
+    drawLine(sc, Low - eurUsdTakeOutLowHoldBelow.p80 / 10000, idCounter++);
+
+    drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p20 / 10000, idCounter++);
+    drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p50 / 10000, idCounter++);
+    drawLine(sc, Low - eurUsdTakeOutLowHoldInside.p80 / 10000, idCounter++);
 
 
 }
