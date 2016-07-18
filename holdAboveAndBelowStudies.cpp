@@ -89,7 +89,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     int dateRetrieved = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
 
 
-    sc.AddMessageToLog(sc.Symbol, 0);
+    //sc.AddMessageToLog(sc.Symbol, 0);
 
     int idCounter = 74191;
 
