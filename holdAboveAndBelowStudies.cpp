@@ -9,6 +9,8 @@ struct PercentileGroup {
 
 void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor);
 
+int getPipDivisor(SCStudyInterfaceRef sc);
+
 SCDLLName("Hold Above and Below Studies")
 
 void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor) {
@@ -157,14 +159,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
     int idCounter = 74191;
 
-
-
-    int pipDivisor;
-    if (sc.Symbol.CompareNoCase("USDJPY") == 0 || sc.Symbol.CompareNoCase("EURJPY") == 0) {
-        pipDivisor = 100;
-    } else {
-        pipDivisor = 10000;
-    }
+    int pipDivisor = getPipDivisor(sc);
 
     drawLine(sc,
              {
@@ -192,5 +187,17 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
                      Low - sc.Input[10].GetFloat() / pipDivisor,
                      Low - sc.Input[11].GetFloat() / pipDivisor,
              }, idCounter++, COLOR_YELLOW);
+
+
 }
+
+int getPipDivisor(SCStudyInterfaceRef sc) {
+    if (sc.Symbol.CompareNoCase("USDJPY") == 0 || sc.Symbol.CompareNoCase("EURJPY") == 0) {
+       return 100;
+    } else {
+        return 10000;
+    }
+}
+
+
 
