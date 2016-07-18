@@ -78,6 +78,17 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
         return;
     }
 
+    //Don't process the bars other than the most recent more than one.
+    int &LastBarIndexProcessed = sc.PersistVars->i1;
+    if (sc.Index == 0)
+        LastBarIndexProcessed = -1;
+
+    if(sc.Index == LastBarIndexProcessed) {
+        return;
+    }
+
+    LastBarIndexProcessed = sc.Index;
+
     SCDateTime Friday = SCDateTime(2016, 7, 15, 15, 0, 0);
 
     float Open;
