@@ -104,6 +104,58 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
     int idCounter = 74191;
 
+    //Higher high close above
+    sc.Input[0].Name = "Higher High Close Above 20";
+    sc.Input[0].SetInt(20);
+    sc.Input[0].SetIntLimits(1, 100);
+
+    sc.Input[1].Name = "Higher High Close Above 50";
+    sc.Input[1].SetInt(25);
+    sc.Input[1].SetIntLimits(1, 100);
+
+    sc.Input[2].Name = "Higher High Close Above 80";
+    sc.Input[2].SetInt(30);
+    sc.Input[2].SetIntLimits(1, 100);
+
+    //Higher high close inside
+    sc.Input[3].Name = "Higher High Close Inside 20";
+    sc.Input[3].SetInt(10);
+    sc.Input[3].SetIntLimits(1, 100);
+
+    sc.Input[4].Name = "Higher High Close Inside 50";
+    sc.Input[4].SetInt(15);
+    sc.Input[4].SetIntLimits(1, 100);
+
+    sc.Input[5].Name = "Higher High Close Inside 80";
+    sc.Input[5].SetInt(20);
+    sc.Input[5].SetIntLimits(1, 100);
+
+    //Lower low close inside
+    sc.Input[6].Name = "Loser Low Close Inside 20";
+    sc.Input[6].SetInt(10);
+    sc.Input[6].SetIntLimits(1, 100);
+
+    sc.Input[7].Name = "Loser Low Close Inside 50";
+    sc.Input[7].SetInt(15);
+    sc.Input[7].SetIntLimits(1, 100);
+
+    sc.Input[8].Name = "Loser Low Close Inside 80";
+    sc.Input[8].SetInt(20);
+    sc.Input[8].SetIntLimits(1, 100);
+
+    //Lower low close below
+    sc.Input[9].Name = "Loser Low Close Below 20";
+    sc.Input[9].SetInt(20);
+    sc.Input[9].SetIntLimits(1, 100);
+
+    sc.Input[10].Name = "Loser Low Close Below 50";
+    sc.Input[10].SetInt(25);
+    sc.Input[10].SetIntLimits(1, 100);
+
+    sc.Input[11].Name = "Loser Low Close Below 80";
+    sc.Input[11].SetInt(30);
+    sc.Input[11].SetIntLimits(1, 100);
+
     if (sc.Symbol.CompareNoCase("EURGBP") == 0) {
         int pipDivisor = 10000;
 
