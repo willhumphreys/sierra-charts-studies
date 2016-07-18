@@ -34,14 +34,6 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
     Tool.BeginDateTime = TimeToCheckFor;
     BarIndex = max(sc.ArraySize, 0);
     Tool.EndDateTime = sc.BaseDateTimeIn[BarIndex];
-
-//    SCString Buffer;
-//    Buffer.Format("p20 %f p50 %f p80 %f", percentileGroup.p20, percentileGroup.p50, percentileGroup.p80);
-//
-//    sc.AddMessageToLog(Buffer, 0);
-
-//    sc.AddMessageToLog(Buffer, 0);
-
     Tool.BeginValue = percentileGroup.p20;
     Tool.EndValue = percentileGroup.p80;
 
