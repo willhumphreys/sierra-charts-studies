@@ -144,7 +144,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
     LastBarIndexProcessed = sc.Index;
 
-    SCDateTime Friday = SCDateTime(2016, 7, 15, 15, 0, 0);
+    SCDateTime Friday = SCDateTime(2016, 7, 15, 0, 0, 0);
 
     float Open;
     float High;
@@ -187,8 +187,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
                      Low - sc.Input[10].GetFloat() / pipDivisor,
                      Low - sc.Input[11].GetFloat() / pipDivisor,
              }, idCounter++, COLOR_YELLOW);
-
-
 }
 
 int getPipDivisor(SCStudyInterfaceRef sc) {
