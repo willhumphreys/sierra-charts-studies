@@ -75,6 +75,59 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
         sc.AutoLoop = 0;
 
 
+        //Higher high close above
+        sc.Input[0].Name = "Higher High Close Above 20";
+        sc.Input[0].SetInt(20);
+        sc.Input[0].SetIntLimits(1, 100);
+
+        sc.Input[1].Name = "Higher High Close Above 50";
+        sc.Input[1].SetInt(25);
+        sc.Input[1].SetIntLimits(1, 100);
+
+        sc.Input[2].Name = "Higher High Close Above 80";
+        sc.Input[2].SetInt(30);
+        sc.Input[2].SetIntLimits(1, 100);
+
+        //Higher high close inside
+        sc.Input[3].Name = "Higher High Close Inside 20";
+        sc.Input[3].SetInt(10);
+        sc.Input[3].SetIntLimits(1, 100);
+
+        sc.Input[4].Name = "Higher High Close Inside 50";
+        sc.Input[4].SetInt(15);
+        sc.Input[4].SetIntLimits(1, 100);
+
+        sc.Input[5].Name = "Higher High Close Inside 80";
+        sc.Input[5].SetInt(20);
+        sc.Input[5].SetIntLimits(1, 100);
+
+        //Lower low close inside
+        sc.Input[6].Name = "Loser Low Close Inside 20";
+        sc.Input[6].SetInt(10);
+        sc.Input[6].SetIntLimits(1, 100);
+
+        sc.Input[7].Name = "Loser Low Close Inside 50";
+        sc.Input[7].SetInt(15);
+        sc.Input[7].SetIntLimits(1, 100);
+
+        sc.Input[8].Name = "Loser Low Close Inside 80";
+        sc.Input[8].SetInt(20);
+        sc.Input[8].SetIntLimits(1, 100);
+
+        //Lower low close below
+        sc.Input[9].Name = "Loser Low Close Below 20";
+        sc.Input[9].SetInt(20);
+        sc.Input[9].SetIntLimits(1, 100);
+
+        sc.Input[10].Name = "Loser Low Close Below 50";
+        sc.Input[10].SetInt(25);
+        sc.Input[10].SetIntLimits(1, 100);
+
+        sc.Input[11].Name = "Loser Low Close Below 80";
+        sc.Input[11].SetInt(30);
+        sc.Input[11].SetIntLimits(1, 100);
+
+
         return;
     }
 
@@ -83,7 +136,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     if (sc.Index == 0)
         LastBarIndexProcessed = -1;
 
-    if(sc.Index == LastBarIndexProcessed) {
+    if (sc.Index == LastBarIndexProcessed) {
         return;
     }
 
@@ -104,356 +157,40 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
     int idCounter = 74191;
 
-    //Higher high close above
-    sc.Input[0].Name = "Higher High Close Above 20";
-    sc.Input[0].SetInt(20);
-    sc.Input[0].SetIntLimits(1, 100);
 
-    sc.Input[1].Name = "Higher High Close Above 50";
-    sc.Input[1].SetInt(25);
-    sc.Input[1].SetIntLimits(1, 100);
 
-    sc.Input[2].Name = "Higher High Close Above 80";
-    sc.Input[2].SetInt(30);
-    sc.Input[2].SetIntLimits(1, 100);
-
-    //Higher high close inside
-    sc.Input[3].Name = "Higher High Close Inside 20";
-    sc.Input[3].SetInt(10);
-    sc.Input[3].SetIntLimits(1, 100);
-
-    sc.Input[4].Name = "Higher High Close Inside 50";
-    sc.Input[4].SetInt(15);
-    sc.Input[4].SetIntLimits(1, 100);
-
-    sc.Input[5].Name = "Higher High Close Inside 80";
-    sc.Input[5].SetInt(20);
-    sc.Input[5].SetIntLimits(1, 100);
-
-    //Lower low close inside
-    sc.Input[6].Name = "Loser Low Close Inside 20";
-    sc.Input[6].SetInt(10);
-    sc.Input[6].SetIntLimits(1, 100);
-
-    sc.Input[7].Name = "Loser Low Close Inside 50";
-    sc.Input[7].SetInt(15);
-    sc.Input[7].SetIntLimits(1, 100);
-
-    sc.Input[8].Name = "Loser Low Close Inside 80";
-    sc.Input[8].SetInt(20);
-    sc.Input[8].SetIntLimits(1, 100);
-
-    //Lower low close below
-    sc.Input[9].Name = "Loser Low Close Below 20";
-    sc.Input[9].SetInt(20);
-    sc.Input[9].SetIntLimits(1, 100);
-
-    sc.Input[10].Name = "Loser Low Close Below 50";
-    sc.Input[10].SetInt(25);
-    sc.Input[10].SetIntLimits(1, 100);
-
-    sc.Input[11].Name = "Loser Low Close Below 80";
-    sc.Input[11].SetInt(30);
-    sc.Input[11].SetIntLimits(1, 100);
-
-    if (sc.Symbol.CompareNoCase("EURGBP") == 0) {
-        int pipDivisor = 10000;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (16.0 / pipDivisor),
-                                                       High + (float) (31.0 / pipDivisor),
-                                                       High + (float) (59.0 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (3.0 / pipDivisor),
-                                                       High + (float) (9.0 / pipDivisor),
-                                                       High + (float) (20.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (15.0 / pipDivisor),
-                                                       Low - (float) (27.0 / pipDivisor),
-                                                       Low - (float) (47.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (3.0 / pipDivisor),
-                                                       Low - (float) (9.0 / pipDivisor),
-                                                       Low - (float) (16.0 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-
-    } else if (sc.Symbol.CompareNoCase("EURUSD") == 0) {
-
-        int pipDivisor = 10000;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (29.4 / pipDivisor),
-                                                       High + (float) (49.0 / pipDivisor),
-                                                       High + (float) (78.0 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (7.0 / pipDivisor),
-                                                       High + (float) (15.0 / pipDivisor),
-                                                       High + (float) (31.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (27.0 / pipDivisor),
-                                                       Low - (float) (49.0 / pipDivisor),
-                                                       Low - (float) (75.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (5.0 / pipDivisor),
-                                                       Low - (float) (13.0 / pipDivisor),
-                                                       Low - (float) (26.0 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-    } else if (sc.Symbol.CompareNoCase("EURJPY") == 0) {
-
-        int pipDivisor = 100;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (30.8 / pipDivisor),
-                                                       High + (float) (60.5 / pipDivisor),
-                                                       High + (float) (99.2 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (6.0 / pipDivisor),
-                                                       High + (float) (18.0 / pipDivisor),
-                                                       High + (float) (32.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (38.4 / pipDivisor),
-                                                       Low - (float) (69.0 / pipDivisor),
-                                                       Low - (float) (112.2 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (8.0 / pipDivisor),
-                                                       Low - (float) (21.0 / pipDivisor),
-                                                       Low - (float) (39.6 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-    } else if (sc.Symbol.CompareNoCase("GBPUSD") == 0) {
-        int pipDivisor = 10000;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (34.0 / pipDivisor),
-                                                       High + (float) (57.0 / pipDivisor),
-                                                       High + (float) (93.0 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (7.0 / pipDivisor),
-                                                       High + (float) (17.0 / pipDivisor),
-                                                       High + (float) (35.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (34.0 / pipDivisor),
-                                                       Low - (float) (58.0 / pipDivisor),
-                                                       Low - (float) (102.6 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (6.0 / pipDivisor),
-                                                       Low - (float) (15.0 / pipDivisor),
-                                                       Low - (float) (30.8 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-
-    } else if (sc.Symbol.CompareNoCase("USDCAD") == 0) {
-        int pipDivisor = 10000;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (20.0 / pipDivisor),
-                                                       High + (float) (41.5 / pipDivisor),
-                                                       High + (float) (64.8 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (4.0 / pipDivisor),
-                                                       High + (float) (12.0 / pipDivisor),
-                                                       High + (float) (24.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (20.0 / pipDivisor),
-                                                       Low - (float) (37.0 / pipDivisor),
-                                                       Low - (float) (67.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (4.0 / pipDivisor),
-                                                       Low - (float) (10.0 / pipDivisor),
-                                                       Low - (float) (20.8 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-
-    } else if (sc.Symbol.CompareNoCase("USDCHF") == 0) {
-        int pipDivisor = 10000;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (23.0 / pipDivisor),
-                                                       High + (float) (39.0 / pipDivisor),
-                                                       High + (float) (62.0 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (4.0 / pipDivisor),
-                                                       High + (float) (11.0 / pipDivisor),
-                                                       High + (float) (24.4 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (23.0 / pipDivisor),
-                                                       Low - (float) (41.0 / pipDivisor),
-                                                       Low - (float) (75.2 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (3.0 / pipDivisor),
-                                                       Low - (float) (11.5 / pipDivisor),
-                                                       Low - (float) (24.2 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-
-    } else if (sc.Symbol.CompareNoCase("AUDUSD") == 0) {
-        int pipDivisor = 10000;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (23.8 / pipDivisor),
-                                                       High + (float) (42.5 / pipDivisor),
-                                                       High + (float) (65.2 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (7.0 / pipDivisor),
-                                                       High + (float) (14.0 / pipDivisor),
-                                                       High + (float) (26.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (22.2 / pipDivisor),
-                                                       Low - (float) (41.5 / pipDivisor),
-                                                       Low - (float) (68.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (5.0 / pipDivisor),
-                                                       Low - (float) (15.5 / pipDivisor),
-                                                       Low - (float) (28.4 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-
-    } else if (sc.Symbol.CompareNoCase("NZDUSD") == 0) {
-        int pipDivisor = 10000;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (27.0 / pipDivisor),
-                                                       High + (float) (47.0 / pipDivisor),
-                                                       High + (float) (70.0 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (6.0 / pipDivisor),
-                                                       High + (float) (14.0 / pipDivisor),
-                                                       High + (float) (25.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (22.0 / pipDivisor),
-                                                       Low - (float) (40.0 / pipDivisor),
-                                                       Low - (float) (69.4 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (4.0 / pipDivisor),
-                                                       Low - (float) (12.5 / pipDivisor),
-                                                       Low - (float) (26.0 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-    } else if (sc.Symbol.CompareNoCase("USDJPY") == 0) {
-        int pipDivisor = 100;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (21.0 / pipDivisor),
-                                                       High + (float) (40.0 / pipDivisor),
-                                                       High + (float) (72.0 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (4.0 / pipDivisor),
-                                                       High + (float) (11.0 / pipDivisor),
-                                                       High + (float) (23.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (28.0 / pipDivisor),
-                                                       Low - (float) (47.0 / pipDivisor),
-                                                       Low - (float) (89.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (6.0 / pipDivisor),
-                                                       Low - (float) (15.0 / pipDivisor),
-                                                       Low - (float) (25.0 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
-
-    } else if (sc.Symbol.CompareNoCase("EURCHF") == 0) {
-        int pipDivisor = 10000;
-
-        PercentileGroup percentileGroups[4] = {{
-                                                       High + (float) (11.0 / pipDivisor),
-                                                       High + (float) (26.0 / pipDivisor),
-                                                       High + (float) (51.6 / pipDivisor)
-                                               },
-                                               {
-                                                       High + (float) (1.0 / pipDivisor),
-                                                       High + (float) (5.0 / pipDivisor),
-                                                       High + (float) (13.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (9.0 / pipDivisor),
-                                                       Low - (float) (22.0 / pipDivisor),
-                                                       Low - (float) (45.0 / pipDivisor)
-                                               },
-                                               {
-                                                       Low - (float) (1.0 / pipDivisor),
-                                                       Low - (float) (5.0 / pipDivisor),
-                                                       Low - (float) (13.0 / pipDivisor)
-                                               }
-        };
-
-        drawLine(sc, percentileGroups[0], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[1], idCounter++, COLOR_YELLOW);
-        drawLine(sc, percentileGroups[2], idCounter++, COLOR_SANDYBROWN);
-        drawLine(sc, percentileGroups[3], idCounter++, COLOR_YELLOW);
+    int pipDivisor;
+    if (sc.Symbol.CompareNoCase("USDJPY") == 0 || sc.Symbol.CompareNoCase("EURJPY") == 0) {
+        pipDivisor = 100;
+    } else {
+        pipDivisor = 10000;
     }
+
+    drawLine(sc,
+             {
+                     High + sc.Input[0].GetFloat() / pipDivisor,
+                     High + sc.Input[1].GetFloat() / pipDivisor,
+                     High + sc.Input[2].GetFloat() / pipDivisor,
+             },
+             idCounter++, COLOR_SANDYBROWN);
+    drawLine(sc,
+             {
+                     High + sc.Input[3].GetFloat() / pipDivisor,
+                     High + sc.Input[4].GetFloat() / pipDivisor,
+                     High + sc.Input[5].GetFloat() / pipDivisor,
+             },
+             idCounter++, COLOR_YELLOW);
+    drawLine(sc,
+             {
+                     Low - sc.Input[6].GetFloat() / pipDivisor,
+                     Low - sc.Input[7].GetFloat() / pipDivisor,
+                     Low - sc.Input[8].GetFloat() / pipDivisor,
+             }, idCounter++, COLOR_SANDYBROWN);
+    drawLine(sc,
+             {
+                     Low - sc.Input[9].GetFloat() / pipDivisor,
+                     Low - sc.Input[10].GetFloat() / pipDivisor,
+                     Low - sc.Input[11].GetFloat() / pipDivisor,
+             }, idCounter++, COLOR_YELLOW);
 }
 
