@@ -8,8 +8,8 @@ struct PercentileGroup {
 };
 
 void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor);
-
 int getPipDivisor(SCStudyInterfaceRef sc);
+SCDateTime getDayToUse(SCStudyInterfaceRef sc);
 
 SCDLLName("Hold Above and Below Studies")
 
@@ -144,7 +144,8 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
     LastBarIndexProcessed = sc.Index;
 
-    SCDateTime Friday = SCDateTime(2016, 7, 15, 0, 0, 0);
+
+
 
     float Open;
     float High;
@@ -152,8 +153,10 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     float Close;
     float Volume;
 
-    int dateRetrieved = sc.GetOpenHighLowCloseVolumeForDate(Friday, Open, High, Low, Close, Volume);
 
+    SCDateTime DayToUse = getDayToUse(sc);
+
+    int dateRetrieved = sc.GetOpenHighLowCloseVolumeForDate(DayToUse, Open, High, Low, Close, Volume);
 
     //sc.AddMessageToLog(sc.Symbol, 0);
 
@@ -191,10 +194,29 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
 int getPipDivisor(SCStudyInterfaceRef sc) {
     if (sc.Symbol.CompareNoCase("USDJPY") == 0 || sc.Symbol.CompareNoCase("EURJPY") == 0) {
-       return 100;
+        return 100;
     } else {
         return 10000;
     }
+}
+
+
+SCDateTime getDayToUse(SCStudyInterfaceRef sc) {
+
+    SCDateTime currentDateTime = sc.CurrentSystemDateTime;
+    SCDateTime DayToUse;
+    //If today is Sunday or Monday(1) we want to use Friday.
+    //Otherwise use the previous day.
+    if (sc.CurrentSystemDateTime.IsSunday()) {
+        DayToUse = currentDateTime - 2 * DAYS;
+    }
+    else if (sc.CurrentSystemDateTime.GetDayOfWeek() == 1) {
+        DayToUse = currentDateTime - 3 * DAYS;
+    } else {
+        DayToUse = currentDateTime - 1 * DAYS;
+    }
+
+    return DayToUse;
 }
 
 
