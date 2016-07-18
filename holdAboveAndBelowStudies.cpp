@@ -78,7 +78,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
         return;
     }
 
-    SCDateTime Friday = SCDateTime(2016, 7, 14, 15, 0, 0);
+    SCDateTime Friday = SCDateTime(2016, 7, 15, 15, 0, 0);
 
     float Open;
     float High;
