@@ -8,7 +8,9 @@ struct PercentileGroup {
 };
 
 void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor);
+
 int getPipDivisor(SCStudyInterfaceRef sc);
+
 SCDateTime getDayToUse(SCStudyInterfaceRef sc);
 
 SCDLLName("Hold Above and Below Studies")
@@ -64,6 +66,49 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
     sc.UseTool(Tool);
 
 }
+
+SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
+// Section 1 - Set the configuration variables and defaults
+    if (sc.SetDefaults) {
+        sc.GraphName = "NoTradingDays";
+
+// During development set this flag to 1, so the DLL can be rebuilt without restarting Sierra Chart. When development is completed, set it to 0 to improve performance.
+        sc.FreeDLL = 1;
+        sc.StudyDescription = "Show expected reversal and hold levels";
+        sc.GraphRegion = 0;
+        sc.AutoLoop = 0;
+
+
+
+
+        return;
+    }
+
+    s_UseTool Tool;
+    Tool.Clear(); // reset tool structure for our next use
+    Tool.ChartNumber = sc.ChartNumber;
+    Tool.DrawingType = DRAWING_TEXT;
+    Tool.LineNumber = 5035;
+    Tool.BeginDateTime = 50;
+    Tool.UseRelativeVerticalValues = 1;
+    Tool.BeginValue = 50;
+    Tool.Color = COLOR_RED;
+    Tool.Region = sc.GraphRegion;
+
+    SCString Label = "Hello World2";
+
+    Tool.Text.Format("%s", Label.GetChars());
+    Tool.FontSize = 50;
+    Tool.FontBold = true;
+    //Tool.FontFace= "Courier";
+    Tool.AddMethod = UTAM_ADD_OR_ADJUST;
+    Tool.ReverseTextColor = 0;
+
+    sc.UseTool(Tool);
+
+
+}
+
 
 SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     // Section 1 - Set the configuration variables and defaults
@@ -145,8 +190,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     LastBarIndexProcessed = sc.Index;
 
 
-
-
     float Open;
     float High;
     float Low;
@@ -218,6 +261,5 @@ SCDateTime getDayToUse(SCStudyInterfaceRef sc) {
 
     return DayToUse;
 }
-
 
 
