@@ -155,39 +155,39 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
         sc.Input[11].SetString("Arghhhhh");
 
         //Fourth set
-        sc.Input[12].Name = "Year 3";
+        sc.Input[12].Name = "Year 4";
         sc.Input[12].SetInt(2016);
         sc.Input[12].SetIntLimits(2016, 2050);
 
         //Higher high close above
-        sc.Input[13].Name = "Month 3";
+        sc.Input[13].Name = "Month 4";
         sc.Input[13].SetInt(7);
         sc.Input[13].SetIntLimits(1, 12);
 
         //Higher high close above
-        sc.Input[14].Name = "Day 3";
+        sc.Input[14].Name = "Day 4";
         sc.Input[14].SetInt(22);
         sc.Input[14].SetIntLimits(1, 31);
 
-        sc.Input[15].Name = "Message 3";
+        sc.Input[15].Name = "Message 4";
         sc.Input[15].SetString("Arghhhhh");
 
         //Fifth set
-        sc.Input[16].Name = "Year 4";
+        sc.Input[16].Name = "Year 5";
         sc.Input[16].SetInt(2016);
         sc.Input[16].SetIntLimits(2016, 2050);
 
         //Higher high close above
-        sc.Input[17].Name = "Month 4";
+        sc.Input[17].Name = "Month 5";
         sc.Input[17].SetInt(7);
         sc.Input[17].SetIntLimits(1, 12);
 
         //Higher high close above
-        sc.Input[18].Name = "Day 4";
+        sc.Input[18].Name = "Day 5";
         sc.Input[18].SetInt(22);
         sc.Input[18].SetIntLimits(1, 31);
 
-        sc.Input[19].Name = "Message 4";
+        sc.Input[19].Name = "Message 5";
         sc.Input[19].SetString("Arghhhhh");
 
         return;
