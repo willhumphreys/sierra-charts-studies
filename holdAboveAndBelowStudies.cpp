@@ -68,17 +68,22 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
 }
 
 SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
-// Section 1 - Set the configuration variables and defaults
+
     if (sc.SetDefaults) {
         sc.GraphName = "NoTradingDays";
-
-// During development set this flag to 1, so the DLL can be rebuilt without restarting Sierra Chart. When development is completed, set it to 0 to improve performance.
         sc.FreeDLL = 1;
-        sc.StudyDescription = "Show expected reversal and hold levels";
+        sc.StudyDescription = "Set a big message in the middle of screen when I shouldn't be trading.";
         sc.GraphRegion = 0;
         sc.AutoLoop = 0;
 
 
+        //Higher high close above
+        sc.Input[0].Name = "Date 1";
+        sc.Input[0].SetInt(20);
+        sc.Input[0].SetIntLimits(1, 200);
+
+        sc.Input[1].Name = "Message 1";
+        sc.Input[1].SetString("Hello World 3");
 
 
         return;
@@ -95,10 +100,10 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
     Tool.Color = COLOR_RED;
     Tool.Region = sc.GraphRegion;
 
-    SCString Label = "Hello World2";
+    SCString Label = sc.Input[1].GetString();
 
     Tool.Text.Format("%s", Label.GetChars());
-    Tool.FontSize = 50;
+    Tool.FontSize = 70;
     Tool.FontBold = true;
     //Tool.FontFace= "Courier";
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
