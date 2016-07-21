@@ -78,39 +78,54 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
 
 
         //Higher high close above
-        sc.Input[0].Name = "Date 1";
-        sc.Input[0].SetInt(20);
-        sc.Input[0].SetIntLimits(1, 200);
+        sc.Input[0].Name = "Year 1";
+        sc.Input[0].SetInt(2016);
+        sc.Input[0].SetIntLimits(2016, 2050);
 
-        sc.Input[1].Name = "Message 1";
-        sc.Input[1].SetString("Hello World 3");
+        //Higher high close above
+        sc.Input[1].Name = "Month 1";
+        sc.Input[1].SetInt(7);
+        sc.Input[1].SetIntLimits(1, 12);
+
+        //Higher high close above
+        sc.Input[2].Name = "Day 1";
+        sc.Input[2].SetInt(21);
+        sc.Input[2].SetIntLimits(1, 31);
+
+        sc.Input[3].Name = "Message 1";
+        sc.Input[3].SetString("Hello World 3");
 
 
         return;
     }
 
-    s_UseTool Tool;
-    Tool.Clear(); // reset tool structure for our next use
-    Tool.ChartNumber = sc.ChartNumber;
-    Tool.DrawingType = DRAWING_TEXT;
-    Tool.LineNumber = 5035;
-    Tool.BeginDateTime = 50;
-    Tool.UseRelativeVerticalValues = 1;
-    Tool.BeginValue = 50;
-    Tool.Color = COLOR_RED;
-    Tool.Region = sc.GraphRegion;
+    int CurrentDate = sc.BaseDateTimeIn[sc.ArraySize - 1].GetDate();
 
-    SCString Label = sc.Input[1].GetString();
+    int DateValue = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
 
-    Tool.Text.Format("%s", Label.GetChars());
-    Tool.FontSize = 70;
-    Tool.FontBold = true;
-    //Tool.FontFace= "Courier";
-    Tool.AddMethod = UTAM_ADD_OR_ADJUST;
-    Tool.ReverseTextColor = 0;
+    if (CurrentDate == DateValue) {
+        s_UseTool Tool;
+        Tool.Clear(); // reset tool structure for our next use
+        Tool.ChartNumber = sc.ChartNumber;
+        Tool.DrawingType = DRAWING_TEXT;
+        Tool.LineNumber = 5035;
+        Tool.BeginDateTime = 50;
+        Tool.UseRelativeVerticalValues = 1;
+        Tool.BeginValue = 50;
+        Tool.Color = COLOR_RED;
+        Tool.Region = sc.GraphRegion;
 
-    sc.UseTool(Tool);
+        SCString Label = sc.Input[3].GetString();
 
+        Tool.Text.Format("%s", Label.GetChars());
+        Tool.FontSize = 70;
+        Tool.FontBold = true;
+        //Tool.FontFace= "Courier";
+        Tool.AddMethod = UTAM_ADD_OR_ADJUST;
+        Tool.ReverseTextColor = 0;
+
+        sc.UseTool(Tool);
+    }
 
 }
 
