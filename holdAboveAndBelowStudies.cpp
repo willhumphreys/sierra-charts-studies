@@ -103,12 +103,14 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
 
     int DateValue = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
 
+    int idCounter = 74191;
+
     if (CurrentDate == DateValue) {
         s_UseTool Tool;
         Tool.Clear(); // reset tool structure for our next use
         Tool.ChartNumber = sc.ChartNumber;
         Tool.DrawingType = DRAWING_TEXT;
-        Tool.LineNumber = 5035;
+        Tool.LineNumber = idCounter +1;;
         Tool.BeginDateTime = 50;
         Tool.UseRelativeVerticalValues = 1;
         Tool.BeginValue = 50;
