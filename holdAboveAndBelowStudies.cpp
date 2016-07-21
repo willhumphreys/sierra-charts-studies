@@ -67,6 +67,30 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
 
 }
 
+void displayMessage(s_sc &sc, int &idCounter, s_SCInput_145 &messageInput) {
+    s_UseTool Tool;
+    Tool.Clear(); // reset tool structure for our next use
+    Tool.ChartNumber = sc.ChartNumber;
+    Tool.DrawingType = DRAWING_TEXT;
+    Tool.LineNumber = idCounter++;
+    Tool.BeginDateTime = 50;
+    Tool.UseRelativeVerticalValues = 1;
+    Tool.BeginValue = 50;
+    Tool.Color = COLOR_RED;
+    Tool.Region = sc.GraphRegion;
+
+    SCString Label = messageInput.GetString();
+
+    Tool.Text.Format("%s %d", Label.GetChars(), idCounter);
+    Tool.FontSize = 70;
+    Tool.FontBold = true;
+    //Tool.FontFace= "Courier";
+    Tool.AddMethod = UTAM_ADD_OR_ADJUST;
+    Tool.ReverseTextColor = 0;
+
+    sc.UseTool(Tool);
+}
+
 SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
 
     if (sc.SetDefaults) {
@@ -76,8 +100,7 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
         sc.GraphRegion = 0;
         sc.AutoLoop = 0;
 
-
-        //Higher high close above
+        //First set
         sc.Input[0].Name = "Year 1";
         sc.Input[0].SetInt(2016);
         sc.Input[0].SetIntLimits(2016, 2050);
@@ -95,38 +118,107 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
         sc.Input[3].Name = "Message 1";
         sc.Input[3].SetString("Hello World 3");
 
+        //Second set
+        sc.Input[4].Name = "Year 2";
+        sc.Input[4].SetInt(2016);
+        sc.Input[4].SetIntLimits(2016, 2050);
+
+        //Higher high close above
+        sc.Input[5].Name = "Month 2";
+        sc.Input[5].SetInt(7);
+        sc.Input[5].SetIntLimits(1, 12);
+
+        //Higher high close above
+        sc.Input[6].Name = "Day 2";
+        sc.Input[6].SetInt(22);
+        sc.Input[6].SetIntLimits(1, 31);
+
+        sc.Input[7].Name = "Message 2";
+        sc.Input[7].SetString("Arghhhhh");
+
+        //Third set
+        sc.Input[8].Name = "Year 3";
+        sc.Input[8].SetInt(2016);
+        sc.Input[8].SetIntLimits(2016, 2050);
+
+        //Higher high close above
+        sc.Input[9].Name = "Month 3";
+        sc.Input[9].SetInt(7);
+        sc.Input[9].SetIntLimits(1, 12);
+
+        //Higher high close above
+        sc.Input[10].Name = "Day 3";
+        sc.Input[10].SetInt(22);
+        sc.Input[10].SetIntLimits(1, 31);
+
+        sc.Input[11].Name = "Message 3";
+        sc.Input[11].SetString("Arghhhhh");
+
+        //Fourth set
+        sc.Input[12].Name = "Year 3";
+        sc.Input[12].SetInt(2016);
+        sc.Input[12].SetIntLimits(2016, 2050);
+
+        //Higher high close above
+        sc.Input[13].Name = "Month 3";
+        sc.Input[13].SetInt(7);
+        sc.Input[13].SetIntLimits(1, 12);
+
+        //Higher high close above
+        sc.Input[14].Name = "Day 3";
+        sc.Input[14].SetInt(22);
+        sc.Input[14].SetIntLimits(1, 31);
+
+        sc.Input[15].Name = "Message 3";
+        sc.Input[15].SetString("Arghhhhh");
+
+        //Fifth set
+        sc.Input[16].Name = "Year 4";
+        sc.Input[16].SetInt(2016);
+        sc.Input[16].SetIntLimits(2016, 2050);
+
+        //Higher high close above
+        sc.Input[17].Name = "Month 4";
+        sc.Input[17].SetInt(7);
+        sc.Input[17].SetIntLimits(1, 12);
+
+        //Higher high close above
+        sc.Input[18].Name = "Day 4";
+        sc.Input[18].SetInt(22);
+        sc.Input[18].SetIntLimits(1, 31);
+
+        sc.Input[19].Name = "Message 4";
+        sc.Input[19].SetString("Arghhhhh");
 
         return;
     }
 
     int CurrentDate = sc.BaseDateTimeIn[sc.ArraySize - 1].GetDate();
-
-    int DateValue = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
-
     int idCounter = 74191;
 
-    if (CurrentDate == DateValue) {
-        s_UseTool Tool;
-        Tool.Clear(); // reset tool structure for our next use
-        Tool.ChartNumber = sc.ChartNumber;
-        Tool.DrawingType = DRAWING_TEXT;
-        Tool.LineNumber = idCounter +1;;
-        Tool.BeginDateTime = 50;
-        Tool.UseRelativeVerticalValues = 1;
-        Tool.BeginValue = 50;
-        Tool.Color = COLOR_RED;
-        Tool.Region = sc.GraphRegion;
+    int DateValue0 = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
+    if (CurrentDate == DateValue0) {
+        displayMessage(sc, idCounter, sc.Input[3]);
+    }
 
-        SCString Label = sc.Input[3].GetString();
+    int DateValue4 = YMD_DATE(sc.Input[4].GetInt(), sc.Input[5].GetInt(), sc.Input[6].GetInt());
+    if (CurrentDate == DateValue4) {
+        displayMessage(sc, idCounter, sc.Input[7]);
+    }
 
-        Tool.Text.Format("%s", Label.GetChars());
-        Tool.FontSize = 70;
-        Tool.FontBold = true;
-        //Tool.FontFace= "Courier";
-        Tool.AddMethod = UTAM_ADD_OR_ADJUST;
-        Tool.ReverseTextColor = 0;
+    int DateValue8 = YMD_DATE(sc.Input[8].GetInt(), sc.Input[9].GetInt(), sc.Input[10].GetInt());
+    if (CurrentDate == DateValue8) {
+        displayMessage(sc, idCounter, sc.Input[11]);
+    }
 
-        sc.UseTool(Tool);
+    int DateValue12 = YMD_DATE(sc.Input[12].GetInt(), sc.Input[13].GetInt(), sc.Input[14].GetInt());
+    if (CurrentDate == DateValue8) {
+        displayMessage(sc, idCounter, sc.Input[15]);
+    }
+
+    int DateValue16 = YMD_DATE(sc.Input[16].GetInt(), sc.Input[17].GetInt(), sc.Input[18].GetInt());
+    if (CurrentDate == DateValue8) {
+        displayMessage(sc, idCounter, sc.Input[19]);
     }
 
 }
