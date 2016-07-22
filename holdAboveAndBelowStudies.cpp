@@ -194,7 +194,7 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
     }
 
     int CurrentDate = sc.BaseDateTimeIn[sc.ArraySize - 1].GetDate();
-    int idCounter = 74191;
+    int idCounter = 70100;
 
     int DateValue0 = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
     if (CurrentDate == DateValue0) {
@@ -317,7 +317,7 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
 
     //sc.AddMessageToLog(sc.Symbol, 0);
 
-    int idCounter = 74191;
+    int idCounter = 7000;
 
     int pipDivisor = getPipDivisor(sc);
 
