@@ -67,12 +67,12 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
 
 }
 
-void displayMessage(s_sc &sc, int &idCounter, s_SCInput_145 &messageInput) {
+void displayMessage(s_sc &sc, int idCounter, s_SCInput_145 &messageInput) {
     s_UseTool Tool;
     Tool.Clear(); // reset tool structure for our next use
     Tool.ChartNumber = sc.ChartNumber;
     Tool.DrawingType = DRAWING_TEXT;
-    Tool.LineNumber = idCounter++;
+    Tool.LineNumber = idCounter;
     Tool.BeginDateTime = 50;
     Tool.UseRelativeVerticalValues = 1;
     Tool.BeginValue = 50;
@@ -198,27 +198,27 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
 
     int DateValue0 = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
     if (CurrentDate == DateValue0) {
-        displayMessage(sc, idCounter, sc.Input[3]);
+        displayMessage(sc, idCounter++, sc.Input[3]);
     }
 
     int DateValue4 = YMD_DATE(sc.Input[4].GetInt(), sc.Input[5].GetInt(), sc.Input[6].GetInt());
     if (CurrentDate == DateValue4) {
-        displayMessage(sc, idCounter, sc.Input[7]);
+        displayMessage(sc, idCounter++, sc.Input[7]);
     }
 
     int DateValue8 = YMD_DATE(sc.Input[8].GetInt(), sc.Input[9].GetInt(), sc.Input[10].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter, sc.Input[11]);
+        displayMessage(sc, idCounter++, sc.Input[11]);
     }
 
     int DateValue12 = YMD_DATE(sc.Input[12].GetInt(), sc.Input[13].GetInt(), sc.Input[14].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter, sc.Input[15]);
+        displayMessage(sc, idCounter++, sc.Input[15]);
     }
 
     int DateValue16 = YMD_DATE(sc.Input[16].GetInt(), sc.Input[17].GetInt(), sc.Input[18].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter, sc.Input[19]);
+        displayMessage(sc, idCounter++, sc.Input[19]);
     }
 
 }
