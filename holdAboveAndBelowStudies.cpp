@@ -91,6 +91,29 @@ void displayMessage(s_sc &sc, int idCounter, s_SCInput_145 &messageInput) {
     sc.UseTool(Tool);
 }
 
+SCSFExport scsf_simpleStats(SCStudyInterfaceRef sc) {
+
+    if (sc.SetDefaults) {
+        sc.GraphName = "SimpleStats";
+        sc.FreeDLL = 1;
+
+        return;
+    }
+
+    sc.AddMessageToLog(sc.Symbol, 0);
+
+    SCString Buffer;
+    Buffer.Format("1 %f", sc.BaseData[SC_LAST][sc.ArraySize - 1]);
+    sc.AddMessageToLog(Buffer, 0);
+
+    SCString Buffer2;
+    Buffer2.Format("2 %f", sc.BaseData[SC_LAST][sc.ArraySize - 2]);
+    sc.AddMessageToLog(Buffer2, 0);
+
+    return;
+
+}
+
 SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
 
     if (sc.SetDefaults) {
@@ -192,6 +215,8 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
 
         return;
     }
+
+    sc.AddMessageToLog(sc.Symbol, 0);
 
     int CurrentDate = sc.BaseDateTimeIn[sc.ArraySize - 1].GetDate();
     int idCounter = 70100;
