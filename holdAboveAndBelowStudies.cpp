@@ -7,6 +7,14 @@ struct PercentileGroup {
     float p80;
 };
 
+struct NewsItem {
+    int year;
+    int month;
+    int day;
+    SCString symbol;
+    SCString message;
+};
+
 void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLORREF &rectangleColor);
 
 int getPipDivisor(SCStudyInterfaceRef sc);
@@ -67,22 +75,22 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
 
 }
 
-void displayMessage(s_sc &sc, int idCounter, s_SCInput_145 &messageInput) {
+void displayMessage(s_sc &sc, int idCounter, SCString messageInput) {
     s_UseTool Tool;
     Tool.Clear(); // reset tool structure for our next use
     Tool.ChartNumber = sc.ChartNumber;
     Tool.DrawingType = DRAWING_TEXT;
     Tool.LineNumber = idCounter;
-    Tool.BeginDateTime = 50;
+    Tool.BeginDateTime = 0;
     Tool.UseRelativeVerticalValues = 1;
-    Tool.BeginValue = 50;
+    Tool.BeginValue = 100;
     Tool.Color = COLOR_RED;
     Tool.Region = sc.GraphRegion;
 
-    SCString Label = messageInput.GetString();
+    //SCString Label = messageInput.GetString();
 
-    Tool.Text.Format("%s %d", Label.GetChars(), idCounter);
-    Tool.FontSize = 70;
+    Tool.Text.Format("%s", messageInput.GetChars());
+    Tool.FontSize = 30;
     Tool.FontBold = true;
     //Tool.FontFace= "Courier";
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
@@ -216,34 +224,62 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
         return;
     }
 
-    sc.AddMessageToLog(sc.Symbol, 0);
+    const int arrayLength  = 12;
+
+    NewsItem newsItems[arrayLength] = {
+            {2016, 7, 26, "EUR", "15:00 ConsumerConfidence"},
+            {2016, 7, 27, "AUD", "02:30 CPI"},
+            {2016, 7, 27, "GBP", "09:30 Prelim GDP"},
+            {2016, 7, 27, "USD", "13:30 Core Durable Goods"},
+            {2016, 7, 27, "USD", "15:30 Crude Oil Inventories"},
+            {2016, 7, 27, "USD", "19:00 FOMC Statement"},
+            {2016, 7, 28, "USD", "13:30 Unemployment Claims"},
+            {2016, 7, 29, "JPY", "Monetary Policy Statement"},
+            {2016, 7, 29, "JPY", "06:00 BOJ Outlook Report"},
+            {2016, 7, 29, "CAD", "13:30 GDP"},
+            {2016, 7, 29, "USD", "13:30 Advance GDP"},
+            {2016, 7, 29, "EUR", "21:00 EBA Bank Stress Test Results"}
+    };
+
 
     int CurrentDate = sc.BaseDateTimeIn[sc.ArraySize - 1].GetDate();
     int idCounter = 70100;
 
+    for(int x = 0; x < arrayLength; x = x + 1) {
+        NewsItem item = newsItems[x];
+        int DateValue0 = YMD_DATE(item.year, item.month, item.day);
+
+        bool symbolMatch = sc.Symbol.GetSubString(3, 0).CompareNoCase(item.symbol) == 0 ||
+                sc.Symbol.GetSubString(3, 3).CompareNoCase(item.symbol) == 0;
+
+        if (CurrentDate == DateValue0 && symbolMatch) {
+            displayMessage(sc, idCounter++, item.message);
+        }
+    }
+
     int DateValue0 = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
     if (CurrentDate == DateValue0) {
-        displayMessage(sc, idCounter++, sc.Input[3]);
+        displayMessage(sc, idCounter++, sc.Input[3].GetString());
     }
 
     int DateValue4 = YMD_DATE(sc.Input[4].GetInt(), sc.Input[5].GetInt(), sc.Input[6].GetInt());
     if (CurrentDate == DateValue4) {
-        displayMessage(sc, idCounter++, sc.Input[7]);
+        displayMessage(sc, idCounter++, sc.Input[7].GetString());
     }
 
     int DateValue8 = YMD_DATE(sc.Input[8].GetInt(), sc.Input[9].GetInt(), sc.Input[10].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[11]);
+        displayMessage(sc, idCounter++, sc.Input[11].GetString());
     }
 
     int DateValue12 = YMD_DATE(sc.Input[12].GetInt(), sc.Input[13].GetInt(), sc.Input[14].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[15]);
+        displayMessage(sc, idCounter++, sc.Input[15].GetString());
     }
 
     int DateValue16 = YMD_DATE(sc.Input[16].GetInt(), sc.Input[17].GetInt(), sc.Input[18].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[19]);
+        displayMessage(sc, idCounter++, sc.Input[19].GetString());
     }
 
 }
@@ -327,7 +363,6 @@ SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
     }
 
     LastBarIndexProcessed = sc.Index;
-
 
     float Open;
     float High;
