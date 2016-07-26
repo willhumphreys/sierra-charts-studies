@@ -67,34 +67,10 @@ void drawLine(s_sc &sc, PercentileGroup percentileGroup, int lineId, const COLOR
 
 }
 
-
-SCSFExport scsf_simpleStats(SCStudyInterfaceRef sc) {
-
-    if (sc.SetDefaults) {
-        sc.GraphName = "SimpleStats";
-        sc.FreeDLL = 1;
-
-        return;
-    }
-
-    sc.AddMessageToLog(sc.Symbol, 0);
-
-    SCString Buffer;
-    Buffer.Format("1 %f", sc.BaseData[SC_LAST][sc.ArraySize - 1]);
-    sc.AddMessageToLog(Buffer, 0);
-
-    SCString Buffer2;
-    Buffer2.Format("2 %f", sc.BaseData[SC_LAST][sc.ArraySize - 2]);
-    sc.AddMessageToLog(Buffer2, 0);
-
-    return;
-
-}
-
-SCSFExport scsf_TemplateFunction(SCStudyInterfaceRef sc) {
+SCSFExport scsf_ReverseOrHold(SCStudyInterfaceRef sc) {
     // Section 1 - Set the configuration variables and defaults
     if (sc.SetDefaults) {
-        sc.GraphName = "takeOutHighAndHoldAbove";
+        sc.GraphName = "ReverseOrHold";
 
         // During development set this flag to 1, so the DLL can be rebuilt without restarting Sierra Chart. When development is completed, set it to 0 to improve performance.
         sc.FreeDLL = 1;
