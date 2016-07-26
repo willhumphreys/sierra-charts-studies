@@ -8,9 +8,12 @@ struct PercentileGroup {
 };
 
 struct NewsItem {
+    int id;
     int year;
     int month;
     int day;
+    int hours;
+    int minutes;
     SCString symbol;
     SCString message;
 };
@@ -227,33 +230,45 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
     const int arrayLength  = 12;
 
     NewsItem newsItems[arrayLength] = {
-            {2016, 7, 26, "EUR", "15:00 ConsumerConfidence"},
-            {2016, 7, 27, "AUD", "02:30 CPI"},
-            {2016, 7, 27, "GBP", "09:30 Prelim GDP"},
-            {2016, 7, 27, "USD", "13:30 Core Durable Goods"},
-            {2016, 7, 27, "USD", "15:30 Crude Oil Inventories"},
-            {2016, 7, 27, "USD", "19:00 FOMC Statement"},
-            {2016, 7, 28, "USD", "13:30 Unemployment Claims"},
-            {2016, 7, 29, "JPY", "Monetary Policy Statement"},
-            {2016, 7, 29, "JPY", "06:00 BOJ Outlook Report"},
-            {2016, 7, 29, "CAD", "13:30 GDP"},
-            {2016, 7, 29, "USD", "13:30 Advance GDP"},
-            {2016, 7, 29, "EUR", "21:00 EBA Bank Stress Test Results"}
+            {70100, 2016, 7, 26, 15 + 2, 00, "EUR", "15:00 ConsumerConfidence"},
+            {70101, 2016, 7, 27, 2 + 2, 30, "AUD", "02:30 CPI"},
+            {70102, 2016, 7, 27, 9 + 2, 30, "GBP", "09:30 Prelim GDP"},
+            {70103, 2016, 7, 27, 13 + 2, 30, "USD", "13:30 Core Durable Goods"},
+            {70104, 2016, 7, 27, 15 + 2, 30, "USD", "15:30 Crude Oil Inventories"},
+            {70105, 2016, 7, 27, 19 + 2, 00, "USD", "19:00 FOMC Statement"},
+            {70106, 2016, 7, 28, 13 + 2, 30, "USD", "13:30 Unemployment Claims"},
+            {70107, 2016, 7, 29, 0 + 2, 0, "JPY", "Monetary Policy Statement"},
+            {70108, 2016, 7, 29, 6 + 2, 0, "JPY", "06:00 BOJ Outlook Report"},
+            {70109, 2016, 7, 29, 13 + 2, 30, "CAD", "13:30 GDP"},
+            {70110, 2016, 7, 29, 13 + 2, 30, "USD", "13:30 Advance GDP"},
+            {70111, 2016, 7, 29, 21 + 2, 0, "EUR", "21:00 EBA Bank Stress Test Results"}
     };
 
 
-    int CurrentDate = sc.BaseDateTimeIn[sc.ArraySize - 1].GetDate();
+    int CurrentTime = sc.CurrentSystemDateTime.GetTime();
+    int CurrentDate = sc.CurrentSystemDateTime.GetDate();
+
+    int Time = HMS_TIME(newsItems[0].hours, newsItems[0].minutes, 0);
+
+//    SCString Buffer;
+//    Buffer.Format("CT %d T %d", CurrentTime, Time);
+//    sc.AddMessageToLog(Buffer, 0);
+
     int idCounter = 70100;
 
     for(int x = 0; x < arrayLength; x = x + 1) {
         NewsItem item = newsItems[x];
         int DateValue0 = YMD_DATE(item.year, item.month, item.day);
 
+        int Time = HMS_TIME(item.hours, item.minutes, 0);
+
         bool symbolMatch = sc.Symbol.GetSubString(3, 0).CompareNoCase(item.symbol) == 0 ||
                 sc.Symbol.GetSubString(3, 3).CompareNoCase(item.symbol) == 0;
 
-        if (CurrentDate == DateValue0 && symbolMatch) {
-            displayMessage(sc, idCounter++, item.message);
+        if (CurrentDate == DateValue0 && symbolMatch && CurrentTime < Time) {
+            displayMessage(sc, item.id, item.message);
+        } else {
+            sc.DeleteACSChartDrawing(sc.ChartNumber, TOOL_DELETE_CHARTDRAWING, item.id);
         }
     }
 
