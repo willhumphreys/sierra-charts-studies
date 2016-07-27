@@ -12,9 +12,10 @@ struct NewsItem {
     int minutes;
     SCString symbol;
     SCString message;
+    bool alive;
 };
 
-void displayMessage(s_sc &sc, int idCounter, SCString messageInput) {
+void displayMessage(s_sc &sc, int idCounter, SCString messageInput, int drawingCounter) {
     s_UseTool Tool;
     Tool.Clear(); // reset tool structure for our next use
     Tool.ChartNumber = sc.ChartNumber;
@@ -22,7 +23,7 @@ void displayMessage(s_sc &sc, int idCounter, SCString messageInput) {
     Tool.LineNumber = idCounter;
     Tool.BeginDateTime = 0;
     Tool.UseRelativeVerticalValues = 1;
-    Tool.BeginValue = 100;
+    Tool.BeginValue = 100 - (drawingCounter * 4);
     Tool.Color = COLOR_RED;
     Tool.Region = sc.GraphRegion;
 
@@ -143,18 +144,18 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
     const int arrayLength  = 12;
 
     NewsItem newsItems[arrayLength] = {
-            {70100, 2016, 7, 26, 15 + 2, 00, "EUR", "15:00 ConsumerConfidence"},
-            {70101, 2016, 7, 27, 2 + 2, 30, "AUD", "02:30 CPI"},
-            {70102, 2016, 7, 27, 9 + 2, 30, "GBP", "09:30 Prelim GDP"},
-            {70103, 2016, 7, 27, 13 + 2, 30, "USD", "13:30 Core Durable Goods"},
-            {70104, 2016, 7, 27, 15 + 2, 30, "USD", "15:30 Crude Oil Inventories"},
-            {70105, 2016, 7, 27, 19 + 2, 00, "USD", "19:00 FOMC Statement"},
-            {70106, 2016, 7, 28, 13 + 2, 30, "USD", "13:30 Unemployment Claims"},
-            {70107, 2016, 7, 29, 0 + 2, 0, "JPY", "Monetary Policy Statement"},
-            {70108, 2016, 7, 29, 6 + 2, 0, "JPY", "06:00 BOJ Outlook Report"},
-            {70109, 2016, 7, 29, 13 + 2, 30, "CAD", "13:30 GDP"},
-            {70110, 2016, 7, 29, 13 + 2, 30, "USD", "13:30 Advance GDP"},
-            {70111, 2016, 7, 29, 21 + 2, 0, "EUR", "21:00 EBA Bank Stress Test Results"}
+            {70100, 2016, 7, 26, 15 + 2, 00, "EUR", "15:00 ConsumerConfidence", true},
+            {70101, 2016, 7, 27, 2 + 2, 30, "AUD", "02:30 CPI", true},
+            {70102, 2016, 7, 27, 9 + 2, 30, "GBP", "09:30 Prelim GDP", true},
+            {70103, 2016, 7, 27, 13 + 2, 30, "USD", "13:30 Core Durable Goods", true},
+            {70104, 2016, 7, 27, 15 + 2, 30, "USD", "15:30 Crude Oil Inventories", true},
+            {70105, 2016, 7, 27, 19 + 2, 00, "USD", "19:00 FOMC Statement", true},
+            {70106, 2016, 7, 28, 13 + 2, 30, "USD", "13:30 Unemployment Claims", true},
+            {70107, 2016, 7, 29, 0 + 2, 0, "JPY", "Monetary Policy Statement", true},
+            {70108, 2016, 7, 29, 6 + 2, 0, "JPY", "06:00 BOJ Outlook Report", true},
+            {70109, 2016, 7, 29, 13 + 2, 30, "CAD", "13:30 GDP", true},
+            {70110, 2016, 7, 29, 13 + 2, 30, "USD", "13:30 Advance GDP", true},
+            {70111, 2016, 7, 29, 21 + 2, 0, "EUR", "21:00 EBA Bank Stress Test Results", true}
     };
 
 
@@ -169,6 +170,7 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
 
     int idCounter = 70100;
 
+    int drawingCounter = 0;
     for(int x = 0; x < arrayLength; x = x + 1) {
         NewsItem item = newsItems[x];
         int DateValue0 = YMD_DATE(item.year, item.month, item.day);
@@ -178,35 +180,37 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
         bool symbolMatch = sc.Symbol.GetSubString(3, 0).CompareNoCase(item.symbol) == 0 ||
                            sc.Symbol.GetSubString(3, 3).CompareNoCase(item.symbol) == 0;
 
-        if (CurrentDate == DateValue0 && symbolMatch && CurrentTime < Time) {
-            displayMessage(sc, item.id, item.message);
+        if (item.alive && CurrentDate == DateValue0 && symbolMatch && CurrentTime < Time) {
+            displayMessage(sc, item.id, item.message, drawingCounter);
+            drawingCounter++;
         } else {
+            item.alive = false;
             sc.DeleteACSChartDrawing(sc.ChartNumber, TOOL_DELETE_CHARTDRAWING, item.id);
         }
     }
 
     int DateValue0 = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
     if (CurrentDate == DateValue0) {
-        displayMessage(sc, idCounter++, sc.Input[3].GetString());
+        displayMessage(sc, idCounter++, sc.Input[3].GetString(), 0);
     }
 
     int DateValue4 = YMD_DATE(sc.Input[4].GetInt(), sc.Input[5].GetInt(), sc.Input[6].GetInt());
     if (CurrentDate == DateValue4) {
-        displayMessage(sc, idCounter++, sc.Input[7].GetString());
+        displayMessage(sc, idCounter++, sc.Input[7].GetString(), 0);
     }
 
     int DateValue8 = YMD_DATE(sc.Input[8].GetInt(), sc.Input[9].GetInt(), sc.Input[10].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[11].GetString());
+        displayMessage(sc, idCounter++, sc.Input[11].GetString(), 0);
     }
 
     int DateValue12 = YMD_DATE(sc.Input[12].GetInt(), sc.Input[13].GetInt(), sc.Input[14].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[15].GetString());
+        displayMessage(sc, idCounter++, sc.Input[15].GetString(), 0);
     }
 
     int DateValue16 = YMD_DATE(sc.Input[16].GetInt(), sc.Input[17].GetInt(), sc.Input[18].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[19].GetString());
+        displayMessage(sc, idCounter++, sc.Input[19].GetString(), 0);
     }
 }
