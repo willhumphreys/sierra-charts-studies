@@ -13,25 +13,37 @@ struct NewsItem {
     SCString symbol;
     SCString message;
     bool alive;
+    bool majorNews;
 };
 
-void displayMessage(s_sc &sc, int idCounter, SCString messageInput, int drawingCounter) {
+void displayMessage(s_sc &sc, int idCounter, SCString messageInput, int drawingCounter, bool majorNews) {
     s_UseTool Tool;
     Tool.Clear(); // reset tool structure for our next use
     Tool.ChartNumber = sc.ChartNumber;
     Tool.DrawingType = DRAWING_TEXT;
     Tool.LineNumber = idCounter;
-    Tool.BeginDateTime = 0;
+
     Tool.UseRelativeVerticalValues = 1;
-    Tool.BeginValue = 100 - (drawingCounter * 4);
+    int toolBeginDate = 0;
+    int toolBeginValue = 100;
+    int toolFontSize = 30;
+    int toolFontBold = false;
+    if (majorNews) {
+        toolBeginDate = 30;
+        toolBeginValue = 50;
+        toolFontSize = 60;
+        toolFontBold = true;
+    }
+    Tool.BeginDateTime = toolBeginDate;
+    Tool.BeginValue = toolBeginValue - (drawingCounter * 5);
     Tool.Color = COLOR_RED;
     Tool.Region = sc.GraphRegion;
 
     //SCString Label = messageInput.GetString();
 
     Tool.Text.Format("%s", messageInput.GetChars());
-    Tool.FontSize = 30;
-    Tool.FontBold = true;
+    Tool.FontSize = toolFontSize;
+    Tool.FontBold = toolFontBold;
     //Tool.FontFace= "Courier";
     Tool.AddMethod = UTAM_ADD_OR_ADJUST;
     Tool.ReverseTextColor = 0;
@@ -141,21 +153,21 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
         return;
     }
 
-    const int arrayLength  = 12;
+    const int arrayLength = 12;
 
     NewsItem newsItems[arrayLength] = {
-            {70100, 2016, 7, 26, 15 + 2, 00, "EUR", "15:00 ConsumerConfidence", true},
-            {70101, 2016, 7, 27, 2 + 2, 30, "AUD", "02:30 CPI", true},
-            {70102, 2016, 7, 27, 9 + 2, 30, "GBP", "09:30 Prelim GDP", true},
-            {70103, 2016, 7, 27, 13 + 2, 30, "USD", "13:30 Core Durable Goods", true},
-            {70104, 2016, 7, 27, 15 + 2, 30, "USD", "15:30 Crude Oil Inventories", true},
-            {70105, 2016, 7, 27, 19 + 2, 00, "USD", "19:00 FOMC Statement", true},
-            {70106, 2016, 7, 28, 13 + 2, 30, "USD", "13:30 Unemployment Claims", true},
-            {70107, 2016, 7, 29, 0 + 2, 0, "JPY", "Monetary Policy Statement", true},
-            {70108, 2016, 7, 29, 6 + 2, 0, "JPY", "06:00 BOJ Outlook Report", true},
-            {70109, 2016, 7, 29, 13 + 2, 30, "CAD", "13:30 GDP", true},
-            {70110, 2016, 7, 29, 13 + 2, 30, "USD", "13:30 Advance GDP", true},
-            {70111, 2016, 7, 29, 21 + 2, 0, "EUR", "21:00 EBA Bank Stress Test Results", true}
+            {70100, 2016, 7, 26, 15 + 2, 00, "EUR", "15:00 ConsumerConfidence",           true, false},
+            {70101, 2016, 7, 27, 2 + 2,  30, "AUD", "02:30 CPI",                          true, false},
+            {70102, 2016, 7, 27, 9 + 2,  30, "GBP", "09:30 Prelim GDP",                   true, false},
+            {70103, 2016, 7, 27, 13 + 2, 30, "USD", "13:30 Core Durable Goods",           true, false},
+            {70104, 2016, 7, 27, 15 + 2, 30, "USD", "15:30 Crude Oil Inventories",        true, false},
+            {70105, 2016, 7, 27, 19 + 2, 00, "USD", "19:00 FOMC Statement",               true, true},
+            {70106, 2016, 7, 28, 13 + 2, 30, "USD", "13:30 Unemployment Claims",          true, false},
+            {70107, 2016, 7, 29, 0 + 2,  0,  "JPY", "Monetary Policy Statement",          true, false},
+            {70108, 2016, 7, 29, 6 + 2,  0,  "JPY", "06:00 BOJ Outlook Report",           true, false},
+            {70109, 2016, 7, 29, 13 + 2, 30, "CAD", "13:30 GDP",                          true, false},
+            {70110, 2016, 7, 29, 13 + 2, 30, "USD", "13:30 Advance GDP",                  true, false},
+            {70111, 2016, 7, 29, 21 + 2, 0,  "EUR", "21:00 EBA Bank Stress Test Results", true, false}
     };
 
 
@@ -171,7 +183,7 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
     int idCounter = 70100;
 
     int drawingCounter = 0;
-    for(int x = 0; x < arrayLength; x = x + 1) {
+    for (int x = 0; x < arrayLength; x = x + 1) {
         NewsItem item = newsItems[x];
         int DateValue0 = YMD_DATE(item.year, item.month, item.day);
 
@@ -181,7 +193,7 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
                            sc.Symbol.GetSubString(3, 3).CompareNoCase(item.symbol) == 0;
 
         if (item.alive && CurrentDate == DateValue0 && symbolMatch && CurrentTime < Time) {
-            displayMessage(sc, item.id, item.message, drawingCounter);
+            displayMessage(sc, item.id, item.message, drawingCounter, item.majorNews);
             drawingCounter++;
         } else {
             item.alive = false;
@@ -191,26 +203,26 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
 
     int DateValue0 = YMD_DATE(sc.Input[0].GetInt(), sc.Input[1].GetInt(), sc.Input[2].GetInt());
     if (CurrentDate == DateValue0) {
-        displayMessage(sc, idCounter++, sc.Input[3].GetString(), 0);
+        displayMessage(sc, idCounter++, sc.Input[3].GetString(), 0, false);
     }
 
     int DateValue4 = YMD_DATE(sc.Input[4].GetInt(), sc.Input[5].GetInt(), sc.Input[6].GetInt());
     if (CurrentDate == DateValue4) {
-        displayMessage(sc, idCounter++, sc.Input[7].GetString(), 0);
+        displayMessage(sc, idCounter++, sc.Input[7].GetString(), 0, false);
     }
 
     int DateValue8 = YMD_DATE(sc.Input[8].GetInt(), sc.Input[9].GetInt(), sc.Input[10].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[11].GetString(), 0);
+        displayMessage(sc, idCounter++, sc.Input[11].GetString(), 0, false);
     }
 
     int DateValue12 = YMD_DATE(sc.Input[12].GetInt(), sc.Input[13].GetInt(), sc.Input[14].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[15].GetString(), 0);
+        displayMessage(sc, idCounter++, sc.Input[15].GetString(), 0, false);
     }
 
     int DateValue16 = YMD_DATE(sc.Input[16].GetInt(), sc.Input[17].GetInt(), sc.Input[18].GetInt());
     if (CurrentDate == DateValue8) {
-        displayMessage(sc, idCounter++, sc.Input[19].GetString(), 0);
+        displayMessage(sc, idCounter++, sc.Input[19].GetString(), 0, false);
     }
 }
