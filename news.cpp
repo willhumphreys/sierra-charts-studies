@@ -192,7 +192,7 @@ SCSFExport scsf_NoTradingDays(SCStudyInterfaceRef sc) {
         bool symbolMatch = sc.Symbol.GetSubString(3, 0).CompareNoCase(item.symbol) == 0 ||
                            sc.Symbol.GetSubString(3, 3).CompareNoCase(item.symbol) == 0;
 
-        if (item.alive && CurrentDate == DateValue0 && symbolMatch && CurrentTime < Time) {
+        if (item.alive && CurrentDate == DateValue0 && (symbolMatch || item.majorNews) && CurrentTime < Time) {
             displayMessage(sc, item.id, item.message, drawingCounter, item.majorNews);
             drawingCounter++;
         } else {
