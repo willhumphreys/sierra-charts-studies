@@ -150,7 +150,15 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
-        sc.BuyEntry(order);
+        //Specify a Target and a Stop with 8 tick offsets. We are specifying one Target and one Stop, additional targets and stops can be specified as well.
+        order.Target1Offset = 100*sc.TickSize;
+        order.Stop1Offset = 100*sc.TickSize;
+        order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
+
+        int Result = sc.BuyEntry(order);
+        if(Result > 0) {
+
+        }
     }
 
     else if(High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh && High > PreviousHigh && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED)
@@ -164,6 +172,11 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
         s_SCNewOrder order;
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
+
+        //Specify a Target and a Stop with 8 tick offsets. We are specifying one Target and one Stop, additional targets and stops can be specified as well.
+        order.Target1Offset = 100*sc.TickSize;
+        order.Stop1Offset = 100*sc.TickSize;
+        order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
         sc.SellEntry(order);
     }
