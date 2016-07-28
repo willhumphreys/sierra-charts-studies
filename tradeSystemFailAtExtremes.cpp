@@ -44,8 +44,7 @@ is 1.
 */
 
 
-SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
-{
+SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
@@ -53,8 +52,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
     SCSubgraphRef bullish = sc.Subgraph[0];
     SCSubgraphRef bearish = sc.Subgraph[1];
 
-    if (sc.SetDefaults)
-    {
+    if (sc.SetDefaults) {
 
         // Set the configuration and defaults
 
@@ -94,7 +92,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
         sc.AllowOppositeEntryWithOpposingPositionOrOrders = false;
         sc.SupportAttachedOrdersForTrading = false;
 
-        sc.CancelAllOrdersOnEntriesAndReversals= true;
+        sc.CancelAllOrdersOnEntriesAndReversals = true;
         sc.AllowEntryWithWorkingOrders = false;
         sc.CancelAllWorkingOrdersOnExit = true;
         sc.AllowOnlyOneTradePerBar = true;
@@ -105,8 +103,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
     }
 
     // only process at the close of the bar; if it has not closed don't do anything
-    if (sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_NOT_CLOSED)
-    {
+    if (sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_NOT_CLOSED) {
         return;
     }
 
@@ -124,24 +121,30 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
     float LastTradePrice = sc.Close[sc.Index];
     float Open = sc.Open[sc.Index];
     float Low = sc.Low[sc.Index];
-    float PreviousLow = sc.Low[sc.Index -1];
+    float PreviousLow = sc.Low[sc.Index - 1];
     float High = sc.High[sc.Index];
-    float PreviousHigh = sc.High[sc.Index -1];
-
-
-    SCString Buffer;
-    //Buffer.Format("Index %d", sc.Index);
+    float PreviousHigh = sc.High[sc.Index - 1];
+    float PreviousClose = sc.Close[sc.Index - 1];
 
     float currentLow = dailyLows[sc.Index];
     float currentHigh = dailyHighs[sc.Index];
-    Buffer.Format("DailyLow %f, DailyHigh %f", currentLow, currentHigh);
-    sc.AddMessageToLog(Buffer, 0);
 
-    if(Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow && Low < PreviousLow && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+    float LastBarSize = PreviousClose - PreviousLow;
+
+//    SCString Buffer;
+//    //Buffer.Format("Index %d", sc.Index);
+//    Buffer.Format("DailyLow %f, DailyHigh %f", currentLow, currentHigh);
+//    sc.AddMessageToLog(Buffer, 0);
+
+    s_SCPositionData PositionData;
+    int Result = sc.GetTradePosition(PositionData);
+
+    //Buy at lows
+    if (Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow &&
+        Low < PreviousLow && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
 
-
-        sc.AddMessageToLog("Hello", 0);
+      //  sc.AddMessageToLog("Hello", 0);
         // mark the crossover on the chart
         bullish[sc.Index] = 1;
 
@@ -151,20 +154,28 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
         //Specify a Target and a Stop with 8 tick offsets. We are specifying one Target and one Stop, additional targets and stops can be specified as well.
-        order.Target1Offset = 100*sc.TickSize;
-        order.Stop1Offset = 100*sc.TickSize;
+        order.Stop1Price = Low -  10 * sc.TickSize;
+        order.Target1Price = LastTradePrice + (LastTradePrice - Low) + (10 * sc.TickSize);
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
+
+
         int Result = sc.BuyEntry(order);
-        if(Result > 0) {
+        if (Result > 0) {
 
         }
+
+        SCString Buffer2;
+
+       // PositionData.
+
+        Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice , order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
+        sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
     }
+    //Buy at highs
+    else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
+             High > PreviousHigh && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
-    else if(High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh && High > PreviousHigh && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED)
-    {
-
-        sc.AddMessageToLog("Hello", 0);
         // mark the crossover on the chart
         bearish[sc.Index] = 1;
 
@@ -173,10 +184,18 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
-        //Specify a Target and a Stop with 8 tick offsets. We are specifying one Target and one Stop, additional targets and stops can be specified as well.
-        order.Target1Offset = 100*sc.TickSize;
-        order.Stop1Offset = 100*sc.TickSize;
+        order.Stop1Price = High + 10 * sc.TickSize;
+        order.Target1Price = LastTradePrice - (High - LastTradePrice) - (10 * sc.TickSize);
+
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
+
+        SCString Buffer2;
+
+
+
+        Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice, order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
+        sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
+
 
         sc.SellEntry(order);
     }
