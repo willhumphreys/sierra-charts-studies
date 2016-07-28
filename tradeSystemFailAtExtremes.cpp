@@ -67,13 +67,13 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
 
         sc.AutoLoop = 1;  // true
         sc.GraphRegion = 0;
-        sc.FreeDLL = 0;
+        sc.FreeDLL = 1;
         sc.CalculationPrecedence = LOW_PREC_LEVEL;
 
-        line1Ref.Name = "Line1";
+        line1Ref.Name = "Daily Low";
         line1Ref.SetStudySubgraphValues(1, 0);
 
-        line2Ref.Name = "Line2";
+        line2Ref.Name = "Daily High";
         line2Ref.SetStudySubgraphValues(1, 0);
 
         bullish.Name = "Bullish";
@@ -113,16 +113,35 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
 
     // using the line1Ref and line2Ref input variables, retrieve the subgraph arrays into line1,
     // line2 arrays respectively
-    SCFloatArray line1;
-    sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), line1);
+    SCFloatArray dailyLows;
+    sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), dailyLows);
 
-    SCFloatArray line2;
-    sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), line2);
+    SCFloatArray dailyHighs;
+    sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), dailyHighs);
 
     // code below is where we check for crossovers and take action accordingly
 
-    if (sc.CrossOver(line1, line2) == CROSS_FROM_BOTTOM)
-    {
+    float LastTradePrice = sc.Close[sc.Index];
+    float Open = sc.Open[sc.Index];
+    float Low = sc.Low[sc.Index];
+    float PreviousLow = sc.Low[sc.Index -1];
+    float High = sc.High[sc.Index];
+    float PreviousHigh = sc.High[sc.Index -1];
+
+
+    SCString Buffer;
+    //Buffer.Format("Index %d", sc.Index);
+
+    float currentLow = dailyLows[sc.Index];
+    float currentHigh = dailyHighs[sc.Index];
+    Buffer.Format("DailyLow %f, DailyHigh %f", currentLow, currentHigh);
+    sc.AddMessageToLog(Buffer, 0);
+
+    if(Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow && Low < PreviousLow && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+
+
+
+        sc.AddMessageToLog("Hello", 0);
         // mark the crossover on the chart
         bullish[sc.Index] = 1;
 
@@ -134,8 +153,10 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc)
         sc.BuyEntry(order);
     }
 
-    if (sc.CrossOver(line1, line2) == CROSS_FROM_TOP)
+    else if(High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh && High > PreviousHigh && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED)
     {
+
+        sc.AddMessageToLog("Hello", 0);
         // mark the crossover on the chart
         bearish[sc.Index] = 1;
 
