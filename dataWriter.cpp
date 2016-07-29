@@ -19,6 +19,9 @@ SCDLLName("DataWriter")
 
 SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
+
+    SCInputRef line1Ref = sc.Input[0];
+
     sc.AddMessageToLog("What what", 0);
 
     char cCurrentPath[FILENAME_MAX];
@@ -35,16 +38,17 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
 
-    printf ("The current working directory is %s", cCurrentPath);
-
     sc.AddMessageToLog(cCurrentPath, 0);
 
     ofstream myfile;
-    myfile.open ("example.txt", std::ofstream::app);
+    myfile.open ("eurusd_out.txt", std::ofstream::app);
 
     if (sc.SetDefaults) {
 
 
+
+        line1Ref.Name = "Daily Low";
+        line1Ref.SetStudySubgraphValues(1, 0);
 
         //myfile.close();
 
@@ -81,6 +85,20 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     // code below is where we check for crossovers and take action accordingly
 
+
+    SCFloatArray dailyLows;
+    sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), dailyLows);
+
+    float currentLow = dailyLows[sc.Index];
+
+    int year;
+    int month;
+    int day;
+    int hour;
+    int minute;
+    int second;
+
+    sc.BaseDateTimeIn[sc.Index].GetDateTimeYMDHMS(year, month, day, hour, minute, second );
     float LastTradePrice = sc.Close[sc.Index];
     float Open = sc.Open[sc.Index];
     float Low = sc.Low[sc.Index];
@@ -93,7 +111,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
 
     SCString Buffer2;
-    Buffer2.Format("%f,%f,%f,%f\n", Open, Low, High, LastTradePrice);
+    Buffer2.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low, High, LastTradePrice, currentLow);
     sc.AddMessageToLog(Buffer2, 0);
 
     myfile << Buffer2;
