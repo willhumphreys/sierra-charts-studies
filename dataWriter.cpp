@@ -17,48 +17,6 @@ using namespace std;
 
 SCDLLName("DataWriter")
 
-/*
-Overview
---------
-An example of a trading system that enters a new position or
-reverses an existing one on the crossover of two study Subgraphs.
-
-When line1 crosses line2 from below the system will go long.
-
-When line1 crosses line2 from above, the system will go short.
-
-Comments
---------
-* Let the user of this trading system study select the two study
-Subgraph lines to monitor for a crossover. This is accomplished using
-sc.Input[].SetStudySubgraphValues. In the Study Settings the user is
-provided with list boxes to select the study and subgraph.
-
-* The example uses the Auto Trade Management reversal functionality by
-setting sc.SupportReversals to 1. This means that we simply call
-sc.BuyEntry for a long and sc.SellEntry for a short with the number of
-contracts we want to long/short. In the example the number of contracts
-is 1.
-
-  So:
-  ** If we are flat, we will enter 1 contract long/short.
-  ** If we are currently short, Sierra Chart will reverse the position
-     for us and we will be 1 long.
-  ** If we are currently long, Sierra Chart will reverse the Position
-     for us and we will be 1 short.
-
-* For the simplicity of the example, the study process events on the
-  close of the bar.
-
-* To keep the example simple, the study uses market order types to enter the Position.
-
-* Note that if the system enters a Position, and the user manually
-  closes the Position, the system will remain flat until the next
-  crossover at which point a new Position will be established.
-
-*/
-
-
 SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     sc.AddMessageToLog("What what", 0);
