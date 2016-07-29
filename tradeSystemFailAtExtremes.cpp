@@ -154,7 +154,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
         //Specify a Target and a Stop with 8 tick offsets. We are specifying one Target and one Stop, additional targets and stops can be specified as well.
-        order.Stop1Price = Low -  10 * sc.TickSize;
+        order.Stop1Price = Low -  1 * sc.TickSize;
         order.Target1Price = LastTradePrice + (LastTradePrice - Low) + (10 * sc.TickSize);
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
@@ -184,7 +184,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
-        order.Stop1Price = High + 10 * sc.TickSize;
+        order.Stop1Price = High + 1 * sc.TickSize;
         order.Target1Price = LastTradePrice - (High - LastTradePrice) - (10 * sc.TickSize);
 
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
