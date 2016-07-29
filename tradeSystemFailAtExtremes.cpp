@@ -190,9 +190,6 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
         SCString Buffer2;
-
-
-
         Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice, order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
         sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
 
