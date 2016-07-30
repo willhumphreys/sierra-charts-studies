@@ -6,6 +6,8 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
 
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
+    SCInputRef line3Ref = sc.Input[2];
+    SCInputRef line4Ref = sc.Input[3];
 
     SCSubgraphRef bullish = sc.Subgraph[0];
     SCSubgraphRef bearish = sc.Subgraph[1];
@@ -25,6 +27,13 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
 
         line2Ref.Name = "Daily High";
         line2Ref.SetStudySubgraphValues(1, 0);
+
+        line3Ref.Name = "Today's Low";
+        line3Ref.SetStudySubgraphValues(1, 0);
+
+        line4Ref.Name = "Today's High";
+        line4Ref.SetStudySubgraphValues(1, 0);
+
 
         bullish.Name = "Bullish";
         bullish.DrawStyle = DRAWSTYLE_POINTHIGH;
@@ -68,6 +77,13 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
     SCFloatArray dailyHighs;
     sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), dailyHighs);
 
+
+    SCFloatArray todaysLows;
+    sc.GetStudyArrayUsingID(line3Ref.GetStudyID(), line3Ref.GetSubgraphIndex(), todaysLows);
+
+    SCFloatArray todaysHighs;
+    sc.GetStudyArrayUsingID(line4Ref.GetStudyID(), line4Ref.GetSubgraphIndex(), todaysHighs);
+
     // code below is where we check for crossovers and take action accordingly
 
     float LastTradePrice = sc.Close[sc.Index];
@@ -88,7 +104,7 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
 
     //Buy at lows
     if (Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow &&
-        Low < PreviousLow && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+        todaysLows[sc.Index] < todaysLows[sc.Index -1] && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
 
         // mark the crossover on the chart
@@ -111,7 +127,7 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
     }
     //Sell at highs
     else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
-             High > PreviousHigh && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+             todaysHighs[sc.Index] > todaysHighs[sc.Index -1] && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
         bearish[sc.Index] = 1;
