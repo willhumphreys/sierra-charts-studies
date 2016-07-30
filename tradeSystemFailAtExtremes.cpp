@@ -2,7 +2,7 @@
 
 SCDLLName("TradingSystemFailAtExtremes")
 
-SCSFExport scsf_SC_TradingSystemFailAtExtremes(SCStudyInterfaceRef sc) {
+SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
 
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
@@ -12,8 +12,8 @@ SCSFExport scsf_SC_TradingSystemFailAtExtremes(SCStudyInterfaceRef sc) {
 
     if (sc.SetDefaults) {
 
-        sc.GraphName = "TradingSystem Fail At Extremes";
-        sc.StudyDescription = "Look at Daily reversals and see if they hold or not.";
+        sc.GraphName = "Fade Breakouts";
+        sc.StudyDescription = "Fade breakouts";
 
         sc.AutoLoop = 1;  // true
         sc.GraphRegion = 0;
