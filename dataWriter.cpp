@@ -21,6 +21,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
 
     SCInputRef line1Ref = sc.Input[0];
+    SCInputRef line2Ref = sc.Input[1];
 
     sc.AddMessageToLog("What what", 0);
 
@@ -30,8 +31,6 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
     {
         //return errno;
 
-
-        // PositionData.
 
         sc.AddMessageToLog("Didn't work", 0);
     }
@@ -49,6 +48,9 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
         line1Ref.Name = "Daily Low";
         line1Ref.SetStudySubgraphValues(1, 0);
+
+        line2Ref.Name = "Daily High";
+        line2Ref.SetStudySubgraphValues(1, 0);
 
         //myfile.close();
 
@@ -83,13 +85,14 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         return;
     }
 
-    // code below is where we check for crossovers and take action accordingly
-
 
     SCFloatArray dailyLows;
     sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), dailyLows);
+    float dailyLow = dailyLows[sc.Index -1];
 
-    float currentLow = dailyLows[sc.Index];
+    SCFloatArray dailyHighs;
+    sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), dailyHighs);
+    float dailyHigh = dailyHighs[sc.Index -1];
 
     int year;
     int month;
@@ -111,7 +114,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
 
     SCString Buffer2;
-    Buffer2.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low, High, LastTradePrice, currentLow);
+    Buffer2.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low, High, LastTradePrice, dailyLow, dailyHigh);
     sc.AddMessageToLog(Buffer2, 0);
 
     myfile << Buffer2;
