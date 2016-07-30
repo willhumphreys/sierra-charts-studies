@@ -2,49 +2,7 @@
 
 SCDLLName("TradingSystemFailAtExtremes")
 
-/*
-Overview
---------
-An example of a trading system that enters a new position or
-reverses an existing one on the crossover of two study Subgraphs.
-
-When line1 crosses line2 from below the system will go long.
-
-When line1 crosses line2 from above, the system will go short.
-
-Comments
---------
-* Let the user of this trading system study select the two study
-Subgraph lines to monitor for a crossover. This is accomplished using
-sc.Input[].SetStudySubgraphValues. In the Study Settings the user is
-provided with list boxes to select the study and subgraph.
-
-* The example uses the Auto Trade Management reversal functionality by
-setting sc.SupportReversals to 1. This means that we simply call
-sc.BuyEntry for a long and sc.SellEntry for a short with the number of
-contracts we want to long/short. In the example the number of contracts
-is 1.
-
-  So:
-  ** If we are flat, we will enter 1 contract long/short.
-  ** If we are currently short, Sierra Chart will reverse the position
-     for us and we will be 1 long.
-  ** If we are currently long, Sierra Chart will reverse the Position
-     for us and we will be 1 short.
-
-* For the simplicity of the example, the study process events on the
-  close of the bar.
-
-* To keep the example simple, the study uses market order types to enter the Position.
-
-* Note that if the system enters a Position, and the user manually
-  closes the Position, the system will remain flat until the next
-  crossover at which point a new Position will be established.
-
-*/
-
-
-SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
+SCSFExport scsf_SC_TradingSystemFailAtExtremes(SCStudyInterfaceRef sc) {
 
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
@@ -54,14 +12,8 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     if (sc.SetDefaults) {
 
-        // Set the configuration and defaults
-
-        sc.GraphName = "Trading CrossOver Example";
-
-        sc.StudyDescription = "An example of a trading system that enters a new position or \
-                               reverses an existing one on the crossover of two study Subgraphs. \
-                               When line1 crosses line2 from below, the system will look to be long. \
-                               When line1 crosses line2 from above, the system will look to be short.";
+        sc.GraphName = "TradingSystem Fail At Extremes";
+        sc.StudyDescription = "Look at Daily reversals and see if they hold or not.";
 
         sc.AutoLoop = 1;  // true
         sc.GraphRegion = 0;
@@ -131,11 +83,6 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     float LastBarSize = PreviousClose - PreviousLow;
 
-//    SCString Buffer;
-//    //Buffer.Format("Index %d", sc.Index);
-//    Buffer.Format("DailyLow %f, DailyHigh %f", currentLow, currentHigh);
-//    sc.AddMessageToLog(Buffer, 0);
-
     s_SCPositionData PositionData;
     int Result = sc.GetTradePosition(PositionData);
 
@@ -144,7 +91,6 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         Low < PreviousLow && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
 
-      //  sc.AddMessageToLog("Hello", 0);
         // mark the crossover on the chart
         bullish[sc.Index] = 1;
 
@@ -153,21 +99,12 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
-        //Specify a Target and a Stop with 8 tick offsets. We are specifying one Target and one Stop, additional targets and stops can be specified as well.
         order.Stop1Price = Low -  1 * sc.TickSize;
         order.Target1Price = LastTradePrice + (LastTradePrice - Low) + (10 * sc.TickSize);
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
-
-
-        int Result = sc.BuyEntry(order);
-        if (Result > 0) {
-
-        }
-
+        sc.BuyEntry(order);
         SCString Buffer2;
-
-       // PositionData.
 
         Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice , order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
         sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
