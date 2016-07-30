@@ -109,7 +109,7 @@ SCSFExport scsf_SC_TradingSystemFailAtExtremes(SCStudyInterfaceRef sc) {
         Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice , order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
         sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
     }
-    //Buy at highs
+    //Sell at highs
     else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
              High > PreviousHigh && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
