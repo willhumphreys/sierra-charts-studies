@@ -107,7 +107,6 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
         return;
     }
 
-
     // using the line1Ref and line2Ref input variables, retrieve the subgraph arrays into line1,
     // line2 arrays respectively
     SCFloatArray dailyLows;
@@ -348,6 +347,4 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         //logEntryMessage(sc, PositionData, order);
         sc.BuyEntry(order);
     }
-
-
 }
