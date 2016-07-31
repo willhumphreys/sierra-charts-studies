@@ -1,33 +1,33 @@
 #include "sierrachart.h"
 
-bool getLowCheck(const s_sc &sc, const SCFloatArray &todaysLows, float Low, float PreviousLow, int lowCheckPref);
+bool getLowCheck(const s_sc &sc, const SCFloatArray &lowOfTheDay, float Low, float PreviousLow, int lowCheckPref);
 
-bool getHighCheck(const s_sc &sc, const SCFloatArray &todaysHighs, float High, float PreviousHigh, int highCheckPref);
+bool getHighCheck(const s_sc &sc, const SCFloatArray &highOfTheDay, float High, float PreviousHigh, int highCheckPref);
 
 void logEntryMessage(s_sc &sc, const s_SCPositionData &PositionData, const s_SCNewOrder &order);
 
 SCDLLName("TradingSystemFailAtExtremes")
 
-bool getLowCheck(const s_sc &sc, const SCFloatArray &todaysLows, float Low, float PreviousLow, int lowCheckPref) {
+bool getLowCheck(const s_sc &sc, const SCFloatArray &lowOfTheDay, float Low, float PreviousLow, int lowCheckPref) {
     bool lowCheck;
     if (lowCheckPref == 0) {
         //Current Candle is below last candle.
         lowCheck = Low < PreviousLow;
     } else {
-        //Current Candle is the daily low.
-        lowCheck = todaysLows[sc.Index] < todaysLows[sc.Index - 1];
+        //New low for the day is put in.
+        lowCheck = lowOfTheDay[sc.Index] < lowOfTheDay[sc.Index - 1];
     }
     return lowCheck;
 }
 
-bool getHighCheck(const s_sc &sc, const SCFloatArray &todaysHighs, float High, float PreviousHigh, int highCheckPref) {
+bool getHighCheck(const s_sc &sc, const SCFloatArray &highOfTheDay, float High, float PreviousHigh, int highCheckPref) {
     bool highCheck;
     if (highCheckPref == 0) {
         //Current Candle is above the last candle.
         highCheck = High > PreviousHigh;
     } else {
-        //Current Candle takes out the high of the day
-        highCheck = todaysHighs[sc.Index] > todaysHighs[sc.Index - 1];
+        //New High for the day put in.
+        highCheck = highOfTheDay[sc.Index] > highOfTheDay[sc.Index - 1];
     }
     return highCheck;
 }
@@ -265,18 +265,17 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     }
 
 
-    SCFloatArray dailyLows;
-    sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), dailyLows);
+    SCFloatArray candleLows;
+    sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), candleLows);
 
-    SCFloatArray dailyHighs;
-    sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), dailyHighs);
+    SCFloatArray candleHighs;
+    sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), candleHighs);
 
+    SCFloatArray lowOfTheDay;
+    sc.GetStudyArrayUsingID(line3Ref.GetStudyID(), line3Ref.GetSubgraphIndex(), lowOfTheDay);
 
-    SCFloatArray todaysLows;
-    sc.GetStudyArrayUsingID(line3Ref.GetStudyID(), line3Ref.GetSubgraphIndex(), todaysLows);
-
-    SCFloatArray todaysHighs;
-    sc.GetStudyArrayUsingID(line4Ref.GetStudyID(), line4Ref.GetSubgraphIndex(), todaysHighs);
+    SCFloatArray highOfTheDay;
+    sc.GetStudyArrayUsingID(line4Ref.GetStudyID(), line4Ref.GetSubgraphIndex(), highOfTheDay);
 
     // code below is where we check for crossovers and take action accordingly
 
@@ -288,8 +287,8 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     float PreviousHigh = sc.High[sc.Index - 1];
     float PreviousClose = sc.Close[sc.Index - 1];
 
-    float currentLow = dailyLows[sc.Index];
-    float currentHigh = dailyHighs[sc.Index];
+    float currentLow = candleLows[sc.Index];
+    float currentHigh = candleHighs[sc.Index];
 
     float LastBarSize = PreviousClose - PreviousLow;
 
@@ -298,7 +297,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
 
 
     if (Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow &&
-        getLowCheck(sc, todaysLows, Low, PreviousLow, highLowCheckPrefInput.GetIndex()) &&
+        getLowCheck(sc, lowOfTheDay, Low, PreviousLow, highLowCheckPrefInput.GetIndex()) &&
         sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
@@ -318,7 +317,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     }
         //Buy the highs
     else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
-             getHighCheck(sc, todaysHighs, High, PreviousHigh, highLowCheckPrefInput.GetIndex()) &&
+             getHighCheck(sc, highOfTheDay, High, PreviousHigh, highLowCheckPrefInput.GetIndex()) &&
              sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
