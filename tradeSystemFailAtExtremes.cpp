@@ -104,7 +104,7 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
 
     //Buy at lows
     if (Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow &&
-        todaysLows[sc.Index] < todaysLows[sc.Index -1] && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+        todaysLows[sc.Index] < todaysLows[sc.Index - 1] && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
 
         // mark the crossover on the chart
@@ -115,19 +115,20 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
-        order.Stop1Price = Low -  1 * sc.TickSize;
+        order.Stop1Price = Low - 1 * sc.TickSize;
         order.Target1Price = LastTradePrice + (LastTradePrice - Low) + (10 * sc.TickSize);
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
         sc.BuyEntry(order);
         SCString Buffer2;
 
-        Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice , order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
+        Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice,
+                       order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
         sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
     }
-    //Sell at highs
+        //Sell at highs
     else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
-             todaysHighs[sc.Index] > todaysHighs[sc.Index -1] && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+             todaysHighs[sc.Index] > todaysHighs[sc.Index - 1] && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
         bearish[sc.Index] = 1;
@@ -143,7 +144,8 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
         SCString Buffer2;
-        Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice, order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
+        Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice,
+                       order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
         sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
 
 
@@ -160,6 +162,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
 
     SCSubgraphRef bullish = sc.Subgraph[0];
     SCSubgraphRef bearish = sc.Subgraph[1];
+
 
     if (sc.SetDefaults) {
 
@@ -251,47 +254,67 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     s_SCPositionData PositionData;
     int Result = sc.GetTradePosition(PositionData);
 
+    //New and fancy
+    //bool lowCheck = Low < PreviousLow;
+
     //Sell the lows
+    bool lowCheck = todaysLows[sc.Index] < todaysLows[sc.Index - 1];
     if (Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow &&
-        todaysLows[sc.Index] < todaysLows[sc.Index -1] && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+        lowCheck && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
         bearish[sc.Index] = 1;
 
-        // create a market order and enter short
+        // Create a market order and enter long.
         s_SCNewOrder order;
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
-        order.Stop1Price = High + 1 * sc.TickSize;
-        order.Target1Price = LastTradePrice - (High - LastTradePrice) - (10 * sc.TickSize);
-
+        order.Target1Price = Low - 1 * sc.TickSize;
+        order.Stop1Price = LastTradePrice + (LastTradePrice - Low) + (10 * sc.TickSize);
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
-
-        SCString Buffer2;
-        Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice, order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
-        sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
 
         sc.SellEntry(order);
-    }
-        //Buy the highs
-    else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
-             todaysHighs[sc.Index] > todaysHighs[sc.Index -1] && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
-
-        bullish[sc.Index] = 1;
-
-        s_SCNewOrder order;
-        order.OrderQuantity = 1;
-        order.OrderType = SCT_ORDERTYPE_MARKET;
-
-        order.Stop1Price = Low -  1 * sc.TickSize;
-        order.Target1Price = LastTradePrice + (LastTradePrice - Low) + (10 * sc.TickSize);
-        order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
-
-        sc.BuyEntry(order);
         SCString Buffer2;
 
-        Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice , order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
+        Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice,
+                       order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
         sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
+    }
+        //Buy the highs
+    else {
+
+        //New and fancy
+       // bool highCheck = High > PreviousHigh;
+        bool highCheck = todaysHighs[sc.Index] > todaysHighs[sc.Index - 1];
+        if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
+            highCheck && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+
+
+
+
+            //bool highCheck = todaysHighs[sc.Index] > todaysHighs[sc.Index - 1];
+
+            // mark the crossover on the chart
+            bullish[sc.Index] = 1;
+
+            // create a market order and enter short
+            s_SCNewOrder order;
+            order.OrderQuantity = 1;
+            order.OrderType = SCT_ORDERTYPE_MARKET;
+
+            order.Target1Price = High + 1 * sc.TickSize;
+            order.Stop1Price = LastTradePrice - (High - LastTradePrice) - (10 * sc.TickSize);
+
+            order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
+
+            SCString Buffer2;
+            Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice,
+                           order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
+            sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
+
+
+            sc.BuyEntry(order);
+        }
     }
 }
