@@ -203,7 +203,6 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     SCSubgraphRef bullish = sc.Subgraph[0];
     SCSubgraphRef bearish = sc.Subgraph[1];
 
-
     if (sc.SetDefaults) {
 
         sc.GraphName = "Breakouts";
@@ -264,7 +263,6 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         return;
     }
 
-
     SCFloatArray candleLows;
     sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), candleLows);
 
@@ -276,8 +274,6 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
 
     SCFloatArray highOfTheDay;
     sc.GetStudyArrayUsingID(line4Ref.GetStudyID(), line4Ref.GetSubgraphIndex(), highOfTheDay);
-
-    // code below is where we check for crossovers and take action accordingly
 
     float LastTradePrice = sc.Close[sc.Index];
     float Open = sc.Open[sc.Index];
