@@ -4,6 +4,8 @@ bool getLowCheck(const s_sc &sc, const SCFloatArray &todaysLows, float Low, floa
 
 bool getHighCheck(const s_sc &sc, const SCFloatArray &todaysHighs, float High, float PreviousHigh, int highCheckPref);
 
+void logEntryMessage(s_sc &sc, const s_SCPositionData &PositionData, const s_SCNewOrder &order);
+
 SCDLLName("TradingSystemFailAtExtremes")
 
 bool getLowCheck(const s_sc &sc, const SCFloatArray &todaysLows, float Low, float PreviousLow, int lowCheckPref) {
@@ -30,7 +32,15 @@ bool getHighCheck(const s_sc &sc, const SCFloatArray &todaysHighs, float High, f
     return highCheck;
 }
 
-SCSFExport  scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
+void logEntryMessage(s_sc &sc, const s_SCPositionData &PositionData, const s_SCNewOrder &order) {
+    SCString Buffer2;
+
+    Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice,
+                   order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
+    sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
+}
+
+SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
 
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
@@ -255,8 +265,6 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     }
 
 
-    // using the line1Ref and line2Ref input variables, retrieve the subgraph arrays into line1,
-    // line2 arrays respectively
     SCFloatArray dailyLows;
     sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), dailyLows);
 
@@ -305,12 +313,8 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         order.Stop1Price = LastTradePrice + (LastTradePrice - Low) + (10 * sc.TickSize);
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
+        //logEntryMessage(sc, PositionData, order);
         sc.SellEntry(order);
-        SCString Buffer2;
-
-        Buffer2.Format(" AveragePrice %f Target %f Stop %f Total Trades %d", PositionData.AveragePrice,
-                       order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
-        sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
     }
         //Buy the highs
     else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
@@ -330,12 +334,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
 
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
-        SCString Buffer2;
-        Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice,
-                       order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
-        sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
-
-
+        //logEntryMessage(sc, PositionData, order);
         sc.BuyEntry(order);
     }
 
