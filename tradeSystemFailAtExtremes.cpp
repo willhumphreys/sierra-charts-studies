@@ -8,9 +8,11 @@ SCDLLName("TradingSystemFailAtExtremes")
 
 bool getLowCheck(const s_sc &sc, const SCFloatArray &todaysLows, float Low, float PreviousLow, int lowCheckPref) {
     bool lowCheck;
-    if (lowCheckPref == 1) {
+    if (lowCheckPref == 0) {
+        //Current Candle is below last candle.
         lowCheck = Low < PreviousLow;
     } else {
+        //Current Candle is the daily low.
         lowCheck = todaysLows[sc.Index] < todaysLows[sc.Index - 1];
     }
     return lowCheck;
@@ -18,11 +20,13 @@ bool getLowCheck(const s_sc &sc, const SCFloatArray &todaysLows, float Low, floa
 
 bool getHighCheck(const s_sc &sc, const SCFloatArray &todaysHighs, float High, float PreviousHigh, int highCheckPref) {
     bool highCheck;
-    if (highCheckPref == 1) {
-            highCheck = High > PreviousHigh;
-        } else {
-            highCheck = todaysHighs[sc.Index] > todaysHighs[sc.Index - 1];
-        }
+    if (highCheckPref == 0) {
+        //Current Candle is above the last candle.
+        highCheck = High > PreviousHigh;
+    } else {
+        //Current Candle takes out the high of the day
+        highCheck = todaysHighs[sc.Index] > todaysHighs[sc.Index - 1];
+    }
     return highCheck;
 }
 
@@ -201,10 +205,10 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         sc.CalculationPrecedence = LOW_PREC_LEVEL;
 
         line1Ref.Name = "Daily Low";
-        line1Ref.SetStudySubgraphValues(1,2);
+        line1Ref.SetStudySubgraphValues(1, 2);
 
         line2Ref.Name = "Daily High";
-        line2Ref.SetStudySubgraphValues(1,1);
+        line2Ref.SetStudySubgraphValues(1, 1);
 
         line3Ref.Name = "Today's Low";
         line3Ref.SetStudySubgraphValues(4, 2);
@@ -212,9 +216,9 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         line4Ref.Name = "Today's High";
         line4Ref.SetStudySubgraphValues(4, 1);
 
-        highLowCheckPrefInput.Name = "EntryOptions";
-        highLowCheckPrefInput.SetInt(1);
-        highLowCheckPrefInput.SetIntLimits(1, 2);
+        highLowCheckPrefInput.Name = "Entry Candles to take out";
+        highLowCheckPrefInput.SetCustomInputStrings("Previous Candle;All todays Candles");
+        highLowCheckPrefInput.SetCustomInputIndex(0);
 
 
         bullish.Name = "Bullish";
@@ -286,7 +290,8 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
 
 
     if (Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow &&
-        getLowCheck(sc, todaysLows, Low, PreviousLow, highLowCheckPrefInput.GetInt()) && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+        getLowCheck(sc, todaysLows, Low, PreviousLow, highLowCheckPrefInput.GetIndex()) &&
+        sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
         bearish[sc.Index] = 1;
@@ -309,28 +314,29 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     }
         //Buy the highs
     else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
-             getHighCheck(sc, todaysHighs, High, PreviousHigh, highLowCheckPrefInput.GetInt()) && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+             getHighCheck(sc, todaysHighs, High, PreviousHigh, highLowCheckPrefInput.GetIndex()) &&
+             sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
-            // mark the crossover on the chart
-            bullish[sc.Index] = 1;
+        // mark the crossover on the chart
+        bullish[sc.Index] = 1;
 
-            // create a market order and enter short
-            s_SCNewOrder order;
-            order.OrderQuantity = 1;
-            order.OrderType = SCT_ORDERTYPE_MARKET;
+        // create a market order and enter short
+        s_SCNewOrder order;
+        order.OrderQuantity = 1;
+        order.OrderType = SCT_ORDERTYPE_MARKET;
 
-            order.Target1Price = High + 1 * sc.TickSize;
-            order.Stop1Price = LastTradePrice - (High - LastTradePrice) - (10 * sc.TickSize);
+        order.Target1Price = High + 1 * sc.TickSize;
+        order.Stop1Price = LastTradePrice - (High - LastTradePrice) - (10 * sc.TickSize);
 
-            order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
+        order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
-            SCString Buffer2;
-            Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice,
-                           order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
-            sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
+        SCString Buffer2;
+        Buffer2.Format(" AveragePrice %f Target %fStop %f TotalTrades %d", PositionData.AveragePrice,
+                       order.Target1Price, order.Stop1Price, PositionData.TotalTrades);
+        sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
 
 
-            sc.BuyEntry(order);
-        }
+        sc.BuyEntry(order);
+    }
 
 }
