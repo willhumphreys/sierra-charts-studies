@@ -263,11 +263,11 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         return;
     }
 
-    SCFloatArray candleLows;
-    sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), candleLows);
+    SCFloatArray dailyLows;
+    sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), dailyLows);
 
-    SCFloatArray candleHighs;
-    sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), candleHighs);
+    SCFloatArray dailyHighs;
+    sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), dailyHighs);
 
     SCFloatArray lowOfTheDay;
     sc.GetStudyArrayUsingID(line3Ref.GetStudyID(), line3Ref.GetSubgraphIndex(), lowOfTheDay);
@@ -275,25 +275,38 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     SCFloatArray highOfTheDay;
     sc.GetStudyArrayUsingID(line4Ref.GetStudyID(), line4Ref.GetSubgraphIndex(), highOfTheDay);
 
-    float LastTradePrice = sc.Close[sc.Index];
-    float Open = sc.Open[sc.Index];
-    float Low = sc.Low[sc.Index];
-    float PreviousLow = sc.Low[sc.Index - 1];
-    float High = sc.High[sc.Index];
-    float PreviousHigh = sc.High[sc.Index - 1];
-    float PreviousClose = sc.Close[sc.Index - 1];
+    float CandleClose = sc.Close[sc.Index];
+    float CandleOpen = sc.Open[sc.Index];
+    float CandleLow = sc.Low[sc.Index];
+    float PreviousCandleLow = sc.Low[sc.Index - 1];
+    float CandleHigh = sc.High[sc.Index];
+    float PreviousCandleHigh = sc.High[sc.Index - 1];
+    float PreviousCandleClose = sc.Close[sc.Index - 1];
 
-    float currentLow = candleLows[sc.Index];
-    float currentHigh = candleHighs[sc.Index];
+    float yesterdaysLow = dailyLows[sc.Index];
+    float yesterdaysHigh = dailyHighs[sc.Index];
 
-    float LastBarSize = PreviousClose - PreviousLow;
+    float LastBarSize = PreviousCandleClose - PreviousCandleLow;
 
     s_SCPositionData PositionData;
     int Result = sc.GetTradePosition(PositionData);
 
+    bool takeOutYesterdaysLow = CandleLow < yesterdaysLow;
+    bool closePositive = CandleClose > CandleOpen;
+    bool closeAboveYesterdaysLow = CandleClose > yesterdaysLow;
+    bool openAboveYesterdaysLow = CandleOpen > yesterdaysLow;
 
-    if (Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow &&
-        getLowCheck(sc, lowOfTheDay, Low, PreviousLow, highLowCheckPrefInput.GetIndex()) &&
+    bool takeOutYesterdaysHigh = CandleHigh > yesterdaysHigh;
+    bool closeNegative = CandleClose < CandleOpen;
+    bool closeBelowYesterdaysHigh = CandleClose < yesterdaysHigh;
+    bool openBelowYesterdaysLow = CandleOpen < yesterdaysHigh;
+
+    float extraTicks = 10 * sc.TickSize;
+    if (takeOutYesterdaysLow &&
+        closePositive &&
+        closeAboveYesterdaysLow &&
+        openAboveYesterdaysLow &&
+        getLowCheck(sc, lowOfTheDay, CandleLow, PreviousCandleLow, highLowCheckPrefInput.GetIndex()) &&
         sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
@@ -304,16 +317,19 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
-        order.Target1Price = Low - 1 * sc.TickSize;
-        order.Stop1Price = LastTradePrice + (LastTradePrice - Low) + (10 * sc.TickSize);
+        order.Target1Price = CandleLow - extraTicks;
+        order.Stop1Price = CandleClose + (CandleClose - CandleLow) + extraTicks;
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
         //logEntryMessage(sc, PositionData, order);
         sc.SellEntry(order);
     }
         //Buy the highs
-    else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
-             getHighCheck(sc, highOfTheDay, High, PreviousHigh, highLowCheckPrefInput.GetIndex()) &&
+    else if (takeOutYesterdaysHigh &&
+             closeNegative &&
+             closeBelowYesterdaysHigh &&
+             openBelowYesterdaysLow &&
+             getHighCheck(sc, highOfTheDay, CandleHigh, PreviousCandleHigh, highLowCheckPrefInput.GetIndex()) &&
              sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
@@ -324,13 +340,14 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         order.OrderQuantity = 1;
         order.OrderType = SCT_ORDERTYPE_MARKET;
 
-        order.Target1Price = High + 1 * sc.TickSize;
-        order.Stop1Price = LastTradePrice - (High - LastTradePrice) - (10 * sc.TickSize);
+        order.Target1Price = CandleHigh + extraTicks;
+        order.Stop1Price = CandleClose - (CandleHigh - CandleClose) - extraTicks;
 
         order.OCOGroup1Quantity = 1; // If this is left at the default of 0, then it will be automatically set.
 
         //logEntryMessage(sc, PositionData, order);
         sc.BuyEntry(order);
     }
+
 
 }
