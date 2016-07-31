@@ -1,13 +1,38 @@
 #include "sierrachart.h"
 
+bool getLowCheck(const s_sc &sc, const SCFloatArray &todaysLows, float Low, float PreviousLow, int lowCheckPref);
+
+bool getHighCheck(const s_sc &sc, const SCFloatArray &todaysHighs, float High, float PreviousHigh, int highCheckPref);
+
 SCDLLName("TradingSystemFailAtExtremes")
 
-SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
+bool getLowCheck(const s_sc &sc, const SCFloatArray &todaysLows, float Low, float PreviousLow, int lowCheckPref) {
+    bool lowCheck;
+    if (lowCheckPref == 1) {
+        lowCheck = Low < PreviousLow;
+    } else {
+        lowCheck = todaysLows[sc.Index] < todaysLows[sc.Index - 1];
+    }
+    return lowCheck;
+}
+
+bool getHighCheck(const s_sc &sc, const SCFloatArray &todaysHighs, float High, float PreviousHigh, int highCheckPref) {
+    bool highCheck;
+    if (highCheckPref == 1) {
+            highCheck = High > PreviousHigh;
+        } else {
+            highCheck = todaysHighs[sc.Index] > todaysHighs[sc.Index - 1];
+        }
+    return highCheck;
+}
+
+SCSFExport  scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
 
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
     SCInputRef line3Ref = sc.Input[2];
     SCInputRef line4Ref = sc.Input[3];
+    int highLowCheckPref = sc.Input[4].GetInt();
 
     SCSubgraphRef bullish = sc.Subgraph[0];
     SCSubgraphRef bearish = sc.Subgraph[1];
@@ -159,6 +184,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     SCInputRef line2Ref = sc.Input[1];
     SCInputRef line3Ref = sc.Input[2];
     SCInputRef line4Ref = sc.Input[3];
+    SCInputRef highLowCheckPrefInput = sc.Input[4];
 
     SCSubgraphRef bullish = sc.Subgraph[0];
     SCSubgraphRef bearish = sc.Subgraph[1];
@@ -175,16 +201,20 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         sc.CalculationPrecedence = LOW_PREC_LEVEL;
 
         line1Ref.Name = "Daily Low";
-        line1Ref.SetStudySubgraphValues(1, 0);
+        line1Ref.SetStudySubgraphValues(1,2);
 
         line2Ref.Name = "Daily High";
-        line2Ref.SetStudySubgraphValues(1, 0);
+        line2Ref.SetStudySubgraphValues(1,1);
 
         line3Ref.Name = "Today's Low";
-        line3Ref.SetStudySubgraphValues(1, 0);
+        line3Ref.SetStudySubgraphValues(4, 2);
 
         line4Ref.Name = "Today's High";
-        line4Ref.SetStudySubgraphValues(1, 0);
+        line4Ref.SetStudySubgraphValues(4, 1);
+
+        highLowCheckPrefInput.Name = "EntryOptions";
+        highLowCheckPrefInput.SetInt(1);
+        highLowCheckPrefInput.SetIntLimits(1, 2);
 
 
         bullish.Name = "Bullish";
@@ -254,13 +284,9 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     s_SCPositionData PositionData;
     int Result = sc.GetTradePosition(PositionData);
 
-    //New and fancy
-    //bool lowCheck = Low < PreviousLow;
 
-    //Sell the lows
-    bool lowCheck = todaysLows[sc.Index] < todaysLows[sc.Index - 1];
     if (Low < currentLow && LastTradePrice > Open && LastTradePrice > currentLow && Open > currentLow &&
-        lowCheck && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
+        getLowCheck(sc, todaysLows, Low, PreviousLow, highLowCheckPrefInput.GetInt()) && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
         // mark the crossover on the chart
         bearish[sc.Index] = 1;
@@ -282,18 +308,8 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         sc.AddMessageToLog(PositionData.Symbol + Buffer2, 0);
     }
         //Buy the highs
-    else {
-
-        //New and fancy
-       // bool highCheck = High > PreviousHigh;
-        bool highCheck = todaysHighs[sc.Index] > todaysHighs[sc.Index - 1];
-        if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
-            highCheck && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
-
-
-
-
-            //bool highCheck = todaysHighs[sc.Index] > todaysHighs[sc.Index - 1];
+    else if (High > currentHigh && LastTradePrice < Open && LastTradePrice < currentHigh && Open < currentHigh &&
+             getHighCheck(sc, todaysHighs, High, PreviousHigh, highLowCheckPrefInput.GetInt()) && sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
             // mark the crossover on the chart
             bullish[sc.Index] = 1;
@@ -316,5 +332,5 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
 
             sc.BuyEntry(order);
         }
-    }
+
 }
