@@ -71,10 +71,10 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         outputFileName.SetString(outputFileStr);
 
         todayLowRef.Name = "Today Low";
-        todayLowRef.SetStudySubgraphValues(1, 2);
+        todayLowRef.SetStudySubgraphValues(4, 2);
 
         todayHighRef.Name = "Today High";
-        todayHighRef.SetStudySubgraphValues(1, 1);
+        todayHighRef.SetStudySubgraphValues(4, 1);
 
         //Bollinger Bands
         topBandRef.Name = "Top Band";
