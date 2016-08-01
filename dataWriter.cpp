@@ -124,7 +124,6 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
     sc.GetStudyArrayUsingID(dailyHighRef.GetStudyID(), dailyHighRef.GetSubgraphIndex(), dailyHighs);
     float dailyHigh = dailyHighs[sc.Index];
 
-
     SCFloatArray todayLows;
     sc.GetStudyArrayUsingID(todayLowRef.GetStudyID(), todayLowRef.GetSubgraphIndex(), todayLows);
     float todayLow = todayLows[sc.Index];
