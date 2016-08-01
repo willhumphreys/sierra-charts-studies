@@ -38,25 +38,21 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
+    SCInputRef outputFile = sc.Input[2];
 
     //logTheCurrentDirectory(sc);
 
     ofstream myfile;
-    myfile.open ("eurusd_out.txt", std::ofstream::app);
+    myfile.open (outputFile.GetString(), std::ofstream::app);
 
     if (sc.SetDefaults) {
-
-
-
         line1Ref.Name = "Daily Low";
-        line1Ref.SetStudySubgraphValues(1, 0);
+        line1Ref.SetStudySubgraphValues(1, 2);
 
         line2Ref.Name = "Daily High";
-        line2Ref.SetStudySubgraphValues(1, 0);
+        line2Ref.SetStudySubgraphValues(1, 1);
 
-        //myfile.close();
-
-        // Set the configuration and defaults
+        outputFile.Name = "Output File";
 
         sc.GraphName = "DataWriter";
 
