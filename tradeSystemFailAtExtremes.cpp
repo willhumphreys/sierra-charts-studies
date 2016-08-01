@@ -1,4 +1,5 @@
 #include "sierrachart.h"
+#include <stdexcept>
 
 bool getLowCheck(const s_sc &sc, const SCFloatArray &lowOfTheDay, float Low, float PreviousLow, int lowCheckPref);
 
@@ -10,24 +11,40 @@ SCDLLName("TradingSystemFailAtExtremes")
 
 bool getLowCheck(const s_sc &sc, const SCFloatArray &lowOfTheDay, float Low, float PreviousLow, int lowCheckPref) {
     bool lowCheck;
-    if (lowCheckPref == 0) {
-        //Current Candle is below last candle.
-        lowCheck = Low < PreviousLow;
-    } else {
-        //New low for the day is put in.
-        lowCheck = lowOfTheDay[sc.Index] < lowOfTheDay[sc.Index - 1];
+    switch (lowCheckPref) {
+        case 0:
+            //Current Candle is below last candle.
+            lowCheck = Low < PreviousLow;
+            break;
+        case 1:
+            //New low for the day is put in.
+            lowCheck = lowOfTheDay[sc.Index] < lowOfTheDay[sc.Index - 1];
+            break;
+        case 2:
+            //We don't put in a new low.
+            lowCheck = lowOfTheDay[sc.Index] >= lowOfTheDay[sc.Index - 1];
+            break;
+        default:
+            throw std::invalid_argument( "Invalid lowCheck value" );
     }
     return lowCheck;
 }
 
 bool getHighCheck(const s_sc &sc, const SCFloatArray &highOfTheDay, float High, float PreviousHigh, int highCheckPref) {
     bool highCheck;
-    if (highCheckPref == 0) {
-        //Current Candle is above the last candle.
-        highCheck = High > PreviousHigh;
-    } else {
-        //New High for the day put in.
-        highCheck = highOfTheDay[sc.Index] > highOfTheDay[sc.Index - 1];
+    switch(highCheckPref) {
+        case 0:
+            highCheck = High > PreviousHigh;
+            break;
+        case 1:
+            highCheck = highOfTheDay[sc.Index] > highOfTheDay[sc.Index - 1];
+            break;
+        case 2:
+            //We don't put in a new high.
+            highCheck = highOfTheDay[sc.Index] <= highOfTheDay[sc.Index - 1];
+            break;
+        default:
+            throw std::invalid_argument( "Invalid highCheck value" );
     }
     return highCheck;
 }
@@ -72,7 +89,6 @@ SCSFExport scsf_SC_FadeBreakouts(SCStudyInterfaceRef sc) {
 
         line4Ref.Name = "Today's High";
         line4Ref.SetStudySubgraphValues(1, 0);
-
 
         bullish.Name = "Bullish";
         bullish.DrawStyle = DRAWSTYLE_POINTHIGH;
@@ -198,6 +214,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     SCInputRef line3Ref = sc.Input[2];
     SCInputRef line4Ref = sc.Input[3];
     SCInputRef highLowCheckPrefInput = sc.Input[4];
+    SCInputRef extraTicksInput = sc.Input[5];
 
     SCSubgraphRef bullish = sc.Subgraph[0];
     SCSubgraphRef bearish = sc.Subgraph[1];
@@ -225,9 +242,11 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
         line4Ref.SetStudySubgraphValues(4, 1);
 
         highLowCheckPrefInput.Name = "Entry Candles to take out";
-        highLowCheckPrefInput.SetCustomInputStrings("Previous Candle;All todays Candles");
+        highLowCheckPrefInput.SetCustomInputStrings("Previous Candle;All todays Candles;None");
         highLowCheckPrefInput.SetCustomInputIndex(0);
 
+        extraTicksInput.Name = "Extra Ticks Input";
+        extraTicksInput.SetInt(10);
 
         bullish.Name = "Bullish";
         bullish.DrawStyle = DRAWSTYLE_POINTHIGH;
@@ -300,7 +319,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     bool closeBelowYesterdaysHigh = CandleClose < yesterdaysHigh;
     bool openBelowYesterdaysLow = CandleOpen < yesterdaysHigh;
 
-    float extraTicks = 10 * sc.TickSize;
+    float extraTicks = extraTicksInput.GetInt() * sc.TickSize;
     if (takeOutYesterdaysLow &&
         closePositive &&
         closeAboveYesterdaysLow &&
