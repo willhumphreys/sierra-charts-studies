@@ -36,11 +36,8 @@ SCDLLName("DataWriter")
 
 SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
-
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
-
-    sc.AddMessageToLog("What what", 0);
 
     //logTheCurrentDirectory(sc);
 
@@ -117,7 +114,6 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     float LastBarSize = PreviousClose - PreviousLow;
 
-
     SCString Buffer2;
     Buffer2.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low, High, LastTradePrice, dailyLow, dailyHigh);
     //sc.AddMessageToLog(Buffer2, 0);
@@ -126,5 +122,4 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     s_SCPositionData PositionData;
     int Result = sc.GetTradePosition(PositionData);
-
 }
