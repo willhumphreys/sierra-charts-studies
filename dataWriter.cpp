@@ -120,7 +120,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     SCString Buffer2;
     Buffer2.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low, High, LastTradePrice, dailyLow, dailyHigh);
-    sc.AddMessageToLog(Buffer2, 0);
+    //sc.AddMessageToLog(Buffer2, 0);
 
     myfile << Buffer2;
 
