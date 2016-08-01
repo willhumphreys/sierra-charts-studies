@@ -38,12 +38,12 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     SCInputRef line1Ref = sc.Input[0];
     SCInputRef line2Ref = sc.Input[1];
-    SCInputRef outputFile = sc.Input[2];
+    SCInputRef outputFileName = sc.Input[2];
 
     //logTheCurrentDirectory(sc);
 
-    ofstream myfile;
-    myfile.open (outputFile.GetString(), std::ofstream::app);
+    ofstream outputStream;
+    outputStream.open (outputFileName.GetString(), std::ofstream::app);
 
     if (sc.SetDefaults) {
         line1Ref.Name = "Daily Low";
@@ -52,8 +52,8 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         line2Ref.Name = "Daily High";
         line2Ref.SetStudySubgraphValues(1, 1);
 
-        outputFile.Name = "Output File";
-        outputFile.SetString("dataOut.txt");
+        outputFileName.Name = "Output File";
+        outputFileName.SetString("dataOut.txt");
 
         sc.GraphName = "DataWriter";
 
@@ -111,11 +111,11 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     float LastBarSize = PreviousClose - PreviousLow;
 
-    SCString Buffer2;
-    Buffer2.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low, High, LastTradePrice, dailyLow, dailyHigh);
+    SCString dataLine;
+    dataLine.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low, High, LastTradePrice, dailyLow, dailyHigh);
     //sc.AddMessageToLog(Buffer2, 0);
 
-    myfile << Buffer2;
+    outputStream << dataLine;
 
     s_SCPositionData PositionData;
     int Result = sc.GetTradePosition(PositionData);
