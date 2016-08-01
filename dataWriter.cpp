@@ -53,6 +53,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         line2Ref.SetStudySubgraphValues(1, 1);
 
         outputFile.Name = "Output File";
+        outputFile.SetString("dataOut.txt");
 
         sc.GraphName = "DataWriter";
 
