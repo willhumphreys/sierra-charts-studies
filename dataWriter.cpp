@@ -12,7 +12,24 @@ using namespace std;
 #else
 #include <unistd.h>
 #define GetCurrentDir getcwd
+
+void logTheCurrentDirectory(s_sc &sc);
+
 #endif
+
+void logTheCurrentDirectory(s_sc &sc) {
+    char cCurrentPath[FILENAME_MAX];
+
+    if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
+    {
+        sc.AddMessageToLog("Didn't work", 0);
+        return;
+    }
+
+    cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
+
+    sc.AddMessageToLog(cCurrentPath, 0);
+}
 
 
 SCDLLName("DataWriter")
@@ -25,19 +42,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     sc.AddMessageToLog("What what", 0);
 
-    char cCurrentPath[FILENAME_MAX];
-
-    if (!GetCurrentDir(cCurrentPath, sizeof(cCurrentPath)))
-    {
-        //return errno;
-
-
-        sc.AddMessageToLog("Didn't work", 0);
-    }
-
-    cCurrentPath[sizeof(cCurrentPath) - 1] = '\0'; /* not really required */
-
-    sc.AddMessageToLog(cCurrentPath, 0);
+    //logTheCurrentDirectory(sc);
 
     ofstream myfile;
     myfile.open ("eurusd_out.txt", std::ofstream::app);
