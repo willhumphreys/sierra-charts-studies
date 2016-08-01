@@ -36,9 +36,11 @@ SCDLLName("DataWriter")
 
 SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
-    SCInputRef line1Ref = sc.Input[0];
-    SCInputRef line2Ref = sc.Input[1];
+    SCInputRef dailyLowRef = sc.Input[0];
+    SCInputRef dailyHighRef = sc.Input[1];
     SCInputRef outputFileName = sc.Input[2];
+    SCInputRef todayLowRef = sc.Input[3];
+    SCInputRef todayHighRef = sc.Input[4];
 
     //logTheCurrentDirectory(sc);
 
@@ -46,14 +48,20 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
     outputStream.open (outputFileName.GetString(), std::ofstream::app);
 
     if (sc.SetDefaults) {
-        line1Ref.Name = "Daily Low";
-        line1Ref.SetStudySubgraphValues(1, 2);
+        dailyLowRef.Name = "Daily Low";
+        dailyLowRef.SetStudySubgraphValues(1, 2);
 
-        line2Ref.Name = "Daily High";
-        line2Ref.SetStudySubgraphValues(1, 1);
+        dailyHighRef.Name = "Daily High";
+        dailyHighRef.SetStudySubgraphValues(1, 1);
 
         outputFileName.Name = "Output File";
         outputFileName.SetString("dataOut.txt");
+
+        todayLowRef.Name = "Tdoay Low";
+        todayLowRef.SetStudySubgraphValues(1, 2);
+
+        todayHighRef.Name = "Today High";
+        todayHighRef.SetStudySubgraphValues(1, 1);
 
         sc.GraphName = "DataWriter";
 
@@ -86,12 +94,22 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
 
     SCFloatArray dailyLows;
-    sc.GetStudyArrayUsingID(line1Ref.GetStudyID(), line1Ref.GetSubgraphIndex(), dailyLows);
-    float dailyLow = dailyLows[sc.Index -1];
+    sc.GetStudyArrayUsingID(dailyLowRef.GetStudyID(), dailyLowRef.GetSubgraphIndex(), dailyLows);
+    float dailyLow = dailyLows[sc.Index];
 
     SCFloatArray dailyHighs;
-    sc.GetStudyArrayUsingID(line2Ref.GetStudyID(), line2Ref.GetSubgraphIndex(), dailyHighs);
-    float dailyHigh = dailyHighs[sc.Index -1];
+    sc.GetStudyArrayUsingID(dailyHighRef.GetStudyID(), dailyHighRef.GetSubgraphIndex(), dailyHighs);
+    float dailyHigh = dailyHighs[sc.Index];
+
+
+    SCFloatArray todayLows;
+    sc.GetStudyArrayUsingID(dailyLowRef.GetStudyID(), dailyLowRef.GetSubgraphIndex(), dailyLows);
+    float todayLow = todayLows[sc.Index];
+
+    SCFloatArray todayHighs;
+    sc.GetStudyArrayUsingID(dailyHighRef.GetStudyID(), dailyHighRef.GetSubgraphIndex(), dailyHighs);
+    float todayHigh = todayHighs[sc.Index];
+
 
     int year;
     int month;
@@ -112,7 +130,8 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
     float LastBarSize = PreviousClose - PreviousLow;
 
     SCString dataLine;
-    dataLine.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low, High, LastTradePrice, dailyLow, dailyHigh);
+    dataLine.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low,
+                    High, LastTradePrice, dailyLow, dailyHigh, todayLow, todayHigh);
     //sc.AddMessageToLog(Buffer2, 0);
 
     outputStream << dataLine;
