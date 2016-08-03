@@ -103,11 +103,11 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
 
     SCFloatArray todayLows;
-    sc.GetStudyArrayUsingID(dailyLowRef.GetStudyID(), dailyLowRef.GetSubgraphIndex(), dailyLows);
+    sc.GetStudyArrayUsingID(todayLowRef.GetStudyID(), todayLowRef.GetSubgraphIndex(), dailyLows);
     float todayLow = todayLows[sc.Index];
 
     SCFloatArray todayHighs;
-    sc.GetStudyArrayUsingID(dailyHighRef.GetStudyID(), dailyHighRef.GetSubgraphIndex(), dailyHighs);
+    sc.GetStudyArrayUsingID(todayHighRef.GetStudyID(), todayHighRef.GetSubgraphIndex(), dailyHighs);
     float todayHigh = todayHighs[sc.Index];
 
 
