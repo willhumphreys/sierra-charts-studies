@@ -317,7 +317,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     bool takeOutYesterdaysHigh = CandleHigh > yesterdaysHigh;
     bool closeNegative = CandleClose < CandleOpen;
     bool closeBelowYesterdaysHigh = CandleClose < yesterdaysHigh;
-    bool openBelowYesterdaysLow = CandleOpen < yesterdaysHigh;
+    bool openBelowYesterdaysHigh = CandleOpen < yesterdaysHigh;
 
     float extraTicks = extraTicksInput.GetInt() * sc.TickSize;
     if (takeOutYesterdaysLow &&
@@ -346,7 +346,7 @@ SCSFExport scsf_SC_Breakouts(SCStudyInterfaceRef sc) {
     else if (takeOutYesterdaysHigh &&
              closeNegative &&
              closeBelowYesterdaysHigh &&
-             openBelowYesterdaysLow &&
+             openBelowYesterdaysHigh &&
              getHighCheck(sc, highOfTheDay, CandleHigh, PreviousCandleHigh, highLowCheckPrefInput.GetIndex()) &&
              sc.GetBarHasClosedStatus() == BHCS_BAR_HAS_CLOSED) {
 
