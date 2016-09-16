@@ -58,8 +58,12 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         dailyHighRef.Name = "Daily High";
         dailyHighRef.SetStudySubgraphValues(1, 1);
 
+        SCString outputFileStr;
+        outputFileStr.Format("%s-%d.csv",sc.Symbol.GetChars(), sc.SecondsPerBar / 60);
+
         outputFileName.Name = "Output File";
-        outputFileName.SetString("dataOut.txt");
+        //outputFileName.SetString(sc.Symbol);
+        outputFileName.SetString(outputFileStr);
 
         todayLowRef.Name = "Today Low";
         todayLowRef.SetStudySubgraphValues(1, 2);
@@ -156,7 +160,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
     float LastBarSize = PreviousClose - PreviousLow;
 
     SCString dataLine;
-    dataLine.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low,
+    dataLine.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low,
                     High, LastTradePrice, dailyLow, dailyHigh, todayLow, todayHigh, topBand, movingAverage, bottomBand);
     //sc.AddMessageToLog(Buffer2, 0);
 
