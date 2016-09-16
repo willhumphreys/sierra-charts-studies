@@ -41,6 +41,10 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
     SCInputRef outputFileName = sc.Input[2];
     SCInputRef todayLowRef = sc.Input[3];
     SCInputRef todayHighRef = sc.Input[4];
+    //BollingerBangs
+    SCInputRef topBandRef = sc.Input[5];
+    SCInputRef movingAverageRef = sc.Input[6];
+    SCInputRef bottomBandRef = sc.Input[7];
 
     //logTheCurrentDirectory(sc);
 
@@ -57,11 +61,21 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
         outputFileName.Name = "Output File";
         outputFileName.SetString("dataOut.txt");
 
-        todayLowRef.Name = "Tdoay Low";
+        todayLowRef.Name = "Today Low";
         todayLowRef.SetStudySubgraphValues(1, 2);
 
         todayHighRef.Name = "Today High";
         todayHighRef.SetStudySubgraphValues(1, 1);
+
+        //Bollinger Bands
+        topBandRef.Name = "Top Band";
+        topBandRef.SetStudySubgraphValues(3, 0);
+
+        movingAverageRef.Name = "Moving Average";
+        movingAverageRef.SetStudySubgraphValues(3, 1);
+
+        bottomBandRef.Name = "Bottom Band";
+        bottomBandRef.SetStudySubgraphValues(3, 2);
 
         sc.GraphName = "DataWriter";
 
@@ -110,6 +124,18 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
     sc.GetStudyArrayUsingID(todayHighRef.GetStudyID(), todayHighRef.GetSubgraphIndex(), todayHighs);
     float todayHigh = todayHighs[sc.Index];
 
+    SCFloatArray topBands;
+    sc.GetStudyArrayUsingID(topBandRef.GetStudyID(), topBandRef.GetSubgraphIndex(), topBands);
+    float topBand = topBands[sc.Index];
+
+    SCFloatArray movingAverages;
+    sc.GetStudyArrayUsingID(movingAverageRef.GetStudyID(), movingAverageRef.GetSubgraphIndex(), movingAverages);
+    float movingAverage = movingAverages[sc.Index];
+
+    SCFloatArray bottomBands;
+    sc.GetStudyArrayUsingID(bottomBandRef.GetStudyID(), bottomBandRef.GetSubgraphIndex(), bottomBands);
+    float bottomBand = bottomBands[sc.Index];
+
 
     int year;
     int month;
@@ -131,7 +157,7 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     SCString dataLine;
     dataLine.Format("%d-%d-%dT%d:%d:%d,%f,%f,%f,%f,%f,%f,%f,%f\n", year, month, day, hour, minute, second, Open, Low,
-                    High, LastTradePrice, dailyLow, dailyHigh, todayLow, todayHigh);
+                    High, LastTradePrice, dailyLow, dailyHigh, todayLow, todayHigh, topBand, movingAverage, bottomBand);
     //sc.AddMessageToLog(Buffer2, 0);
 
     outputStream << dataLine;
