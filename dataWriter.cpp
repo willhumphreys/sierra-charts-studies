@@ -48,6 +48,11 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     //logTheCurrentDirectory(sc);
 
+    if(sc.Index == 0)
+    {
+        remove(outputFileName.GetString());
+    }
+
     ofstream outputStream;
     outputStream.open (outputFileName.GetString(), std::ofstream::app);
 
