@@ -50,6 +50,12 @@ SCSFExport scsf_SC_TradingCrossOverExample(SCStudyInterfaceRef sc) {
 
     if(sc.Index == 0)
     {
+        SCString outputFileStr;
+        outputFileStr.Format("%s-%d.csv",sc.Symbol.GetChars(), sc.SecondsPerBar / 60);
+
+        outputFileName.Name = "Output File";
+        //outputFileName.SetString(sc.Symbol);
+        outputFileName.SetString(outputFileStr);
         remove(outputFileName.GetString());
     }
 
